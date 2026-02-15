@@ -2,11 +2,13 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-make-product-image-resolution-robust-so-that-the-cmf-earbuds-images-render-even-if-the-product-id-or-url-encoding-causes-mismatches-specifically-1-update-productimagegallery-to-attempt-image-lookup-by-productid-and-then-fall-back-to-productname-when-no-images-are-found-and-2-update-productcard-to-resolve-the-primary-image-using-product-id-with-a-fallback-to-product-name-if-needed",
-      "featureTitle": "Make product image resolution robust so that the CMF earbuds images render even if the product ID or URL encoding causes mismatches. Specifically: (1) update `ProductImageGallery` to attempt image lookup by `productId` and then fall back to `productName` when no images are found, and (2) update `ProductCard` to resolve the primary image using `product.id` with a fallback to `product.name` if needed.",
+      "featureId": "feature-detect-internet-computer-replica-rejection-errors-that-indicate-the-backend-canister-is-stopped-e-g-reject-code-5-error-code-ic0508-message-includes-is-stopped-and-or-callcontextmanager-and-convert-them-into-a-short-user-friendly-english-error-message-for-storefront-product-browsing-queries-at-minimum-the-queries-used-by-home-featured-products-shop-page-and-category-page",
+      "featureTitle": "Detect Internet Computer replica rejection errors that indicate the backend canister is stopped (e.g., Reject code 5 / error code IC0508 / message includes \"is stopped\" and/or \"CallContextManager\") and convert them into a short, user-friendly English error message for storefront product browsing queries (at minimum the queries used by Home featured products, Shop page, and Category page).",
       "files": [
-        "frontend/src/components/products/ProductCard.tsx",
-        "frontend/src/components/products/ProductImageGallery.tsx"
+        "frontend/src/api/shopHooks.ts",
+        "frontend/src/pages/CategoryPage.tsx",
+        "frontend/src/pages/ShopPage.tsx",
+        "frontend/src/utils/storefrontErrorSanitizer.ts"
       ],
       "components": [
         "authorization@4.0.0",
@@ -17,15 +19,16 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-28"
+        "REQ-44"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-ensure-image-urls-used-by-the-product-image-mapping-are-safe-to-load-in-the-browser-when-filenames-contain-spaces-e-g-cmf-2-1-webp-update-the-product-image-helper-s-in-frontend-src-utils-productimages-ts-so-returned-image-src-values-are-properly-url-encoded-without-changing-the-actual-filenames-on-disk",
-      "featureTitle": "Ensure image URLs used by the product image mapping are safe to load in the browser when filenames contain spaces (e.g., `cmf 2-1.webp`). Update the product image helper(s) in `frontend/src/utils/productImages.ts` so returned image `src` values are properly URL-encoded (without changing the actual filenames on disk).",
+      "featureId": "feature-ensure-all-user-facing-error-text-introduced-or-modified-as-part-of-this-fix-is-written-in-english-including-error-titles-descriptions-and-retry-guidance-and-does-not-include-internal-codes-like-request-ids-reject-codes-cbor-details-or-principals",
+      "featureTitle": "Ensure all user-facing error text introduced or modified as part of this fix is written in English (including error titles, descriptions, and retry guidance) and does not include internal codes like request IDs, reject codes, CBOR details, or principals.",
       "files": [
-        "frontend/src/utils/productImages.ts"
+        "frontend/src/components/feedback/AsyncState.tsx",
+        "frontend/src/utils/storefrontErrorSanitizer.ts"
       ],
       "components": [
         "authorization@4.0.0",
@@ -36,7 +39,7 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-29"
+        "REQ-46"
       ],
       "confidence": "high"
     }

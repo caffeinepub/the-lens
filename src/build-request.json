@@ -1,53 +1,71 @@
 {
   "kind": "build_request",
-  "title": "Fix missing product images in storefront and product detail page",
+  "title": "Handle stopped-backend canister (IC0508) with user-friendly storefront error states",
   "priority": "high",
   "requirements": [
     {
-      "id": "REQ-28",
-      "text": "Make product image resolution robust so that the CMF earbuds images render even if the product ID or URL encoding causes mismatches. Specifically: (1) update `ProductImageGallery` to attempt image lookup by `productId` and then fall back to `productName` when no images are found, and (2) update `ProductCard` to resolve the primary image using `product.id` with a fallback to `product.name` if needed.",
+      "id": "REQ-44",
+      "text": "Detect Internet Computer replica rejection errors that indicate the backend canister is stopped (e.g., Reject code 5 / error code IC0508 / message includes \"is stopped\" and/or \"CallContextManager\") and convert them into a short, user-friendly English error message for storefront product browsing queries (at minimum the queries used by Home featured products, Shop page, and Category page).",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-6"
+          "msg-5"
         ],
         "quotes": [
-          "i am not able to see the images of the product"
+          "Reject text: Canister dy7ez-6yaaa-aaaal-qufya-cai is stopped and therefore does not have a CallContextManager Error code: IC0508 ... Method name: getProductsByCategory"
         ]
       },
       "acceptanceCriteria": [
-        "On the CMF earbuds product detail page, the gallery shows the real images (not the placeholder) and thumbnails are selectable.",
-        "On Shop/Home/Category product cards, the CMF earbuds card shows the primary product image (not the placeholder) when images exist in the mapping.",
-        "If a product truly has no mapped images, the existing placeholder behavior remains unchanged."
+        "When `getAllProducts()` or `getProductsByCategory()` fails due to a stopped canister, the UI does not display the raw replica error blob to the user.",
+        "Instead, the UI shows a concise English message such as: \"The store service is temporarily unavailable. Please try again in a moment.\" (exact wording can vary but must be English and non-technical).",
+        "The error state still offers a \"Retry\" action where the page already supports retry (Shop/Category), and the retry triggers a refetch.",
+        "Normal errors (non-IC0508) continue to display a helpful message (or existing behavior) and do not get incorrectly mapped to the stopped-canister message."
       ]
     },
     {
-      "id": "REQ-29",
-      "text": "Ensure image URLs used by the product image mapping are safe to load in the browser when filenames contain spaces (e.g., `cmf 2-1.webp`). Update the product image helper(s) in `frontend/src/utils/productImages.ts` so returned image `src` values are properly URL-encoded (without changing the actual filenames on disk).",
+      "id": "REQ-45",
+      "text": "Apply the same stopped-canister error sanitization on the Home page featured products section (HomePage currently passes the raw error into AsyncState) so that the Home page never surfaces the raw IC replica rejection details to end users.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-6"
+          "msg-5"
         ],
         "quotes": [
-          "i am not able to see the images of the product"
+          "Method name: getProductsByCategory ... Canister ... is stopped ..."
         ]
       },
       "acceptanceCriteria": [
-        "The browser requests image assets with correctly encoded URLs (spaces encoded) and images load successfully for mapped products.",
-        "No changes are required to the existing image filenames referenced in the mapping (e.g., `/assets/products/cmf-cc-earbuds/cmf 2-1.webp` remains the source of truth)."
+        "If the backend canister is stopped, the Home page Featured Products section shows an English \"service temporarily unavailable\" style message (not the raw error).",
+        "The rest of the Home page (hero + categories) still renders normally even when product fetching fails.",
+        "If the viewer is an admin and the shop is empty, the existing admin initialization empty-state behavior remains unchanged (this requirement only changes the error presentation when a fetch error occurs)."
+      ]
+    },
+    {
+      "id": "REQ-46",
+      "text": "Ensure all user-facing error text introduced or modified as part of this fix is written in English (including error titles, descriptions, and retry guidance) and does not include internal codes like request IDs, reject codes, CBOR details, or principals.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "Use English for any user-facing text in the build request."
+        ]
+      },
+      "acceptanceCriteria": [
+        "No UI surface in the public browsing flow (Home/Shop/Category) displays raw backend rejection payloads (request IDs, principals, CBOR arg bytes, headers) to the user.",
+        "Any new/updated error messages shown to the user are in English and understandable to non-technical users."
       ]
     }
   ],
   "constraints": [
-    "Do not edit files under `frontend/src/components/ui` or any other path listed in `frontend.immutablePaths`.",
-    "Keep the backend architecture as a single Motoko actor; no backend changes are required for this fix.",
-    "Do not change the product image filenames; fix must work with the existing mapped filenames (including spaces)."
+    "Do not edit files under frontend/src/components/ui (shadcn components are read-only).",
+    "Respect the existing single-actor Motoko backend architecture; this fix should not require backend changes to canister lifecycle management."
   ],
   "nonGoals": [
-    "Adding new products or changing product data in the backend.",
-    "Introducing backend image serving (images must remain static frontend assets).",
-    "Adding any new third-party image/CDN dependencies."
+    "Starting/stopping/restarting the canister from within the app or implementing operational tooling to manage canister status.",
+    "Adding new backend APIs solely for health checks.",
+    "Changing Internet Identity behavior or authentication flows."
   ],
   "imageRequirements": {
     "required": [],

@@ -1,24 +1,21 @@
 import { Link, useNavigate } from '@tanstack/react-router';
-import { ArrowRight, Sparkles } from 'lucide-react';
-import { useEffect, useMemo } from 'react';
+import { ArrowRight, Sparkles, Loader2 } from 'lucide-react';
+import { useMemo } from 'react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
+import { Alert, AlertDescription } from '../components/ui/alert';
 import { useGetAllProducts, useInitializeShop } from '../api/shopHooks';
+import { useIsCallerAdmin } from '../api/authHooks';
 import ProductGrid from '../components/products/ProductGrid';
-import AsyncState, { LoadingSpinner } from '../components/feedback/AsyncState';
+import AsyncState from '../components/feedback/AsyncState';
 import { getContent } from '../content/siteContent';
 
 export default function HomePage() {
   const navigate = useNavigate();
   const { data: products, isLoading, isError, error } = useGetAllProducts();
+  const { data: isAdmin, isLoading: isAdminLoading } = useIsCallerAdmin();
   const initShop = useInitializeShop();
   const content = getContent();
-
-  useEffect(() => {
-    if (!isLoading && products && products.length === 0 && !initShop.isPending) {
-      initShop.mutate();
-    }
-  }, [products, isLoading, initShop]);
 
   const featuredProducts = useMemo(() => {
     if (!products || products.length === 0) return [];
@@ -35,6 +32,59 @@ export default function HomePage() {
     // If CMF earbuds doesn't exist, just take first 4 products
     return products.slice(0, 4);
   }, [products]);
+
+  // Admin-aware empty state for featured products
+  const renderEmptyState = () => {
+    // Show loading while checking admin status
+    if (isAdminLoading) {
+      return (
+        <div className="text-center py-12">
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      );
+    }
+
+    // Admin sees initialization option
+    if (isAdmin) {
+      return (
+        <div className="text-center py-12 space-y-4">
+          <p className="text-muted-foreground mb-4">
+            No products available. Initialize the shop to add sample products.
+          </p>
+          <Button
+            onClick={() => initShop.mutate()}
+            disabled={initShop.isPending}
+            size="lg"
+          >
+            {initShop.isPending ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Initializing Shop...
+              </>
+            ) : (
+              'Initialize Shop'
+            )}
+          </Button>
+          {initShop.isError && (
+            <Alert variant="destructive" className="mt-4 max-w-md mx-auto">
+              <AlertDescription>
+                Failed to initialize shop. Please try again or check your permissions.
+              </AlertDescription>
+            </Alert>
+          )}
+        </div>
+      );
+    }
+
+    // Non-admin sees friendly empty message
+    return (
+      <div className="text-center py-12">
+        <p className="text-muted-foreground">
+          No products available at the moment. Please check back soon!
+        </p>
+      </div>
+    );
+  };
 
   return (
     <div>
@@ -142,27 +192,23 @@ export default function HomePage() {
             <p className="text-muted-foreground">{content.home.featured.subheading}</p>
           </div>
 
-          {initShop.isPending ? (
-            <LoadingSpinner message={content.home.featured.setupMessage} />
-          ) : (
-            <AsyncState
-              isLoading={isLoading}
-              isError={isError}
-              error={error}
-              isEmpty={featuredProducts.length === 0}
-              emptyMessage={content.home.featured.emptyMessage}
-            >
-              <ProductGrid products={featuredProducts} />
-              {featuredProducts.length > 0 && (
-                <div className="text-center mt-12">
-                  <Button size="lg" variant="outline" onClick={() => navigate({ to: '/shop' })}>
-                    {content.home.featured.viewAllCta}
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </div>
-              )}
-            </AsyncState>
-          )}
+          <AsyncState
+            isLoading={isLoading}
+            isError={isError}
+            error={error}
+            isEmpty={featuredProducts.length === 0}
+            emptyContent={renderEmptyState()}
+          >
+            <ProductGrid products={featuredProducts} />
+            {featuredProducts.length > 0 && (
+              <div className="text-center mt-12">
+                <Button size="lg" variant="outline" onClick={() => navigate({ to: '/shop' })}>
+                  {content.home.featured.viewAllCta}
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </div>
+            )}
+          </AsyncState>
         </div>
       </section>
     </div>

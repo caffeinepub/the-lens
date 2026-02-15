@@ -1,13 +1,18 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 23,
+  "projectStateVersion": 35,
   "summary": "Build a company website for 'The Lens' to sell trending/viral products, including electronics and home decor.",
   "architectural_notes": [
     "Custom domain setup on Internet Computer requires DNS records (CNAME/TXT + ACME challenge) and adding a .well-known/ic-domains file to the frontend build, followed by redeploy for SSL."
   ],
   "known_issues": [
     "Storefront only shows products with published=true; CMF earbuds product exists but was not visible because it was unpublished.",
-    "Product images are not visible on the product page (user reports they cannot see the product images after deployment)."
+    "Product images are not visible on the product page (user reports they cannot see the product images after deployment).",
+    "After deploying Version 11, storefront shows an error and the user cannot view the listed product(s) (regression/blocker).",
+    "After deploying Version 13, the user still cannot see the product images (image rendering issue persists).",
+    "After deploying Version 14, the user still cannot see the product images (image rendering issue persists).",
+    "After deploying Version 15, the user still cannot see the product images (image rendering issue persists).",
+    "Storefront error: IC replica rejection (Reject code 5, IC0508) because backend canister dy7ez-6yaaa-aaaal-qufya-cai is stopped; query getProductsByCategory fails."
   ],
   "isFixRequest": true,
   "existing_features": [
@@ -178,6 +183,102 @@
         "REQ-29"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-stop-automatically-calling-the-admin-only-initializeshop-mutation-for-non-admin-visitors-on-the-home-page-only-allow-shop-initialization-to-run-when-the-current-caller-is-confirmed-to-be-an-admin",
+      "title": "Stop automatically calling the admin-only `initializeShop()` mutation for non-admin visitors on the Home page; only allow shop initialization to run when the current caller is confirmed to be an admin.",
+      "reqIds": [
+        "REQ-30"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-an-admin-aware-empty-state-on-the-home-page-featured-products-section-if-there-are-no-products-and-the-caller-is-not-an-admin-show-a-friendly-empty-message-if-the-caller-is-an-admin-show-a-clear-call-to-action-to-initialize-the-shop-button-triggers-initializeshop-and-show-any-initialization-errors-in-a-user-friendly-way",
+      "title": "Add an admin-aware empty-state on the Home page featured-products section: if there are no products and the caller is not an admin, show a friendly empty message; if the caller is an admin, show a clear call-to-action to initialize the shop (button triggers `initializeShop()`), and show any initialization errors in a user-friendly way.",
+      "reqIds": [
+        "REQ-31"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-shop-and-category-listing-pages-never-surface-an-initialization-related-unauthorized-error-they-should-show-either-products-an-empty-state-or-a-retryable-fetch-error-from-the-product-queries-only",
+      "title": "Ensure Shop and Category listing pages never surface an initialization-related unauthorized error; they should show either products, an empty state, or a retryable fetch error from the product queries only.",
+      "reqIds": [
+        "REQ-32"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-the-cmf-earbuds-product-images-so-all-available-images-render-reliably-on-the-product-detail-page-gallery-and-on-product-cards-shop-category-home-featured-for-product-id-cmf-earbuds",
+      "title": "Fix the CMF earbuds product images so all available images render reliably on the Product Detail page (gallery) and on product cards (Shop/Category/Home featured) for product id \"cmf-earbuds\".",
+      "reqIds": [
+        "REQ-34"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-the-user-uploaded-image-file-cmf-1-2-webp-to-the-frontend-static-product-assets-under-frontend-public-assets-products-cmf-cc-earbuds-keep-the-filename-exactly-including-spaces",
+      "title": "Add the user-uploaded image file `cmf 1-2.webp` to the frontend static product assets under `frontend/public/assets/products/cmf-cc-earbuds/` (keep the filename exactly, including spaces).",
+      "reqIds": [
+        "REQ-37"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-frontend-src-utils-productimages-ts-to-include-the-new-image-assets-products-cmf-cc-earbuds-cmf-1-2-webp-in-the-image-mapping-for-productid-cmf-earbuds-alongside-the-existing-mapped-images",
+      "title": "Update `frontend/src/utils/productImages.ts` to include the new image `/assets/products/cmf-cc-earbuds/cmf 1-2.webp` in the image mapping for productId `cmf-earbuds` (alongside the existing mapped images).",
+      "reqIds": [
+        "REQ-38"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-harden-product-image-url-generation-so-the-returned-src-values-are-always-browser-loadable-for-filenames-containing-spaces-and-so-already-encoded-paths-do-not-get-double-encoded-update-frontend-src-utils-productimages-ts-encodeimagepath-accordingly-and-ensure-getproductimages-and-getprimaryproductimage-return-correct-stable-urls",
+      "title": "Harden product image URL generation so the returned `src` values are always browser-loadable for filenames containing spaces and so already-encoded paths do not get double-encoded. Update `frontend/src/utils/productImages.ts` `encodeImagePath()` accordingly, and ensure `getProductImages()` and `getPrimaryProductImage()` return correct, stable URLs.",
+      "reqIds": [
+        "REQ-40"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-user-friendly-english-error-state-when-mapped-product-images-exist-but-fail-to-load-e-g-404-so-users-are-not-left-with-a-blank-unclear-experience-implement-this-in-frontend-src-components-products-productimagegallery-tsx-and-frontend-src-components-products-productcard-tsx-using-existing-placeholder-ui-patterns-but-include-a-short-message-indicating-the-images-failed-to-load",
+      "title": "Add a user-friendly, English error state when mapped product images exist but fail to load (e.g., 404) so users are not left with a blank/unclear experience. Implement this in `frontend/src/components/products/ProductImageGallery.tsx` and `frontend/src/components/products/ProductCard.tsx` using existing placeholder UI patterns, but include a short message indicating the images failed to load.",
+      "reqIds": [
+        "REQ-41"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-static-product-image-url-generation-so-the-mapped-cmf-earbuds-images-load-correctly-in-production-deployments-including-internet-computer-hosting-by-generating-browser-loadable-urls-that-respect-the-app-base-path-instead-of-assuming-absolute-root-paths-while-still-correctly-handling-filenames-with-spaces-without-double-encoding",
+      "title": "Fix static product image URL generation so the mapped CMF earbuds images load correctly in production deployments (including Internet Computer hosting) by generating browser-loadable URLs that respect the app base path (instead of assuming absolute root paths) while still correctly handling filenames with spaces without double-encoding.",
+      "reqIds": [
+        "REQ-42"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-verify-and-correct-the-cmf-earbuds-static-asset-presence-and-exact-filenames-under-frontend-public-assets-products-cmf-cc-earbuds-so-they-match-the-mapping-in-frontend-src-utils-productimages-ts-exactly-including-spaces-and-casing-and-ensure-these-assets-are-included-in-the-deployed-frontend-build",
+      "title": "Verify and correct the CMF earbuds static asset presence and exact filenames under `frontend/public/assets/products/cmf-cc-earbuds/` so they match the mapping in `frontend/src/utils/productImages.ts` exactly (including spaces and casing), and ensure these assets are included in the deployed frontend build.",
+      "reqIds": [
+        "REQ-43"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-detect-internet-computer-replica-rejection-errors-that-indicate-the-backend-canister-is-stopped-e-g-reject-code-5-error-code-ic0508-message-includes-is-stopped-and-or-callcontextmanager-and-convert-them-into-a-short-user-friendly-english-error-message-for-storefront-product-browsing-queries-at-minimum-the-queries-used-by-home-featured-products-shop-page-and-category-page",
+      "title": "Detect Internet Computer replica rejection errors that indicate the backend canister is stopped (e.g., Reject code 5 / error code IC0508 / message includes \"is stopped\" and/or \"CallContextManager\") and convert them into a short, user-friendly English error message for storefront product browsing queries (at minimum the queries used by Home featured products, Shop page, and Category page).",
+      "reqIds": [
+        "REQ-44"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-all-user-facing-error-text-introduced-or-modified-as-part-of-this-fix-is-written-in-english-including-error-titles-descriptions-and-retry-guidance-and-does-not-include-internal-codes-like-request-ids-reject-codes-cbor-details-or-principals",
+      "title": "Ensure all user-facing error text introduced or modified as part of this fix is written in English (including error titles, descriptions, and retry guidance) and does not include internal codes like request IDs, reject codes, CBOR details, or principals.",
+      "reqIds": [
+        "REQ-46"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -290,6 +391,58 @@
       "summary": "Ensure the backend update in REQ-23 applies both for fresh deployments (shop initialization/seed data) and for upgrades where the \"cmf-earbuds\" product already exists in canister state (apply a safe, conditional migration/upgrade step to update price/description without deleting other products).",
       "reqIds": [
         "REQ-24"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-23",
+      "summary": "Verify backend product listing endpoints used by the storefront (`getAllProducts`, `getProductsByCategory`, `getProduct`) do not trap for normal public access when products exist and are published, and that the seeded product `cmf-earbuds` remains `published=true` after deployment/upgrade so at least one product is visible in the storefront.",
+      "reqIds": [
+        "REQ-33"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-24",
+      "summary": "Update the CMF earbuds product warranty type/label to \"Seller's Warranty\" (ensure this is reflected on the product detail page, e.g., in the description/specs).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-26",
+      "summary": "Ensure the 4 CMF earbuds image files exist as static frontend assets under `frontend/public/assets/products/cmf-cc-earbuds/` and that `frontend/src/utils/productImages.ts` maps productId `cmf-earbuds` to those exact filenames so the browser can load them even though the filenames include spaces.",
+      "reqIds": [
+        "REQ-35"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-27",
+      "summary": "Update the CMF earbuds product data so the warranty type is \"Seller's Warranty\" (replacing the existing \"Warranty Type: No Warranty\" line) and ensure this change applies both (1) on fresh deployments when an admin runs `initializeShop()` and (2) on upgrades when the product already exists in canister state.",
+      "reqIds": [
+        "REQ-36"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-28",
+      "summary": "Add the newly attached product images to the CMF earbuds product and ensure they render correctly on the product detail page/gallery and product cards (Shop/Category/Home featured).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-29",
+      "summary": "Verify the CMF earbuds static product images are present in the deployed frontend build and loadable by the browser from the exact mapped paths under `frontend/public/assets/products/cmf-cc-earbuds/` (including filenames with spaces): `cmf 1-2.webp`, `cmf 2-1.webp`, `cmf 7-1.webp`, `cmf 1-1.webp`, `cmf 6-1.webp`. If any file is missing or misnamed, add/correct it without renaming the filenames in code (keep filenames exactly as mapped).",
+      "reqIds": [
+        "REQ-39"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-31",
+      "summary": "Apply the same stopped-canister error sanitization on the Home page featured products section (HomePage currently passes the raw error into AsyncState) so that the Home page never surfaces the raw IC replica rejection details to end users.",
+      "reqIds": [
+        "REQ-45"
       ],
       "status": "pending"
     }

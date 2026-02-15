@@ -1,24 +1,57 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-15T16:53:55.910Z",
-  "summary": "REQ-28 and REQ-29 appear to be implemented: ProductCard and ProductImageGallery now try resolving images by product ID first with fallback to product name, and the product image helper returns URL-encoded image src paths to handle spaces in filenames.",
-  "missing_requirements": [],
-  "hallucinated_features": [
+  "generatedAt": "2026-02-15T17:46:03.948Z",
+  "summary": "Implemented centralized storefront error sanitization and applied it to public product browsing queries (all products, products by category). AsyncState now avoids showing long/technical error blobs and preserves Retry where provided. However, the diff evidence for the Home page featured-products section behavior (and its admin/empty-state invariants) is not directly shown, so full REQ-45 acceptance criteria cannot be verified from the provided diff excerpts.",
+  "missing_requirements": [
     {
-      "description": "Additional fuzzy/partial matching logic in getProductImages beyond the specified “fallback to productName”.",
-      "reason": "REQ-28 requests a two-step lookup (by productId, then by productName) when no images are found. The diff also adds a partial/substring match against mapping.productId (normalized.includes(...) or mapping.productId.includes(normalized)), which is not explicitly requested and may cause unintended matches.",
+      "id": "REQ-45",
+      "requirement": "Apply stopped-canister (IC0508) error sanitization to the Home page Featured Products section so the Home page never surfaces raw replica rejection details; ensure hero + categories still render; ensure existing admin initialization empty-state behavior remains unchanged.",
+      "reason": "The diff excerpt does not include the actual HomePage.tsx changes, so it cannot be confirmed that featured-products errors are sanitized there, that the rest of the home page still renders when product fetching fails, or that the admin empty-state behavior is unchanged.",
       "evidence": [
-        "frontend/src/utils/productImages.ts"
+        "frontend-file-summaries.txt (mentions HomePage change but no code shown)"
       ]
     }
   ],
-  "confidence": 0.78,
+  "hallucinated_features": [
+    {
+      "description": "Sanitization/mapping of non-stopped-canister replica rejection errors (general replica rejection patterns) to a generic connection error message, beyond the explicitly requested stopped-canister (IC0508) mapping for storefront browsing queries.",
+      "reason": "REQ-44/45 focus on stopped-canister detection/messaging; additional mapping for other rejection patterns is extra behavior not explicitly requested.",
+      "evidence": [
+        "frontend/src/utils/storefrontErrorSanitizer.ts"
+      ]
+    },
+    {
+      "description": "Additional generic sanitization for long/technical error messages (e.g., messages containing 'canister', 'principal', 'trap') to a generic products-loading error.",
+      "reason": "REQ-46 requires English/non-technical messages and avoiding raw payloads for browsing flows, but this specific heuristic-based rewriting for broad error classes is additional behavior not explicitly requested.",
+      "evidence": [
+        "frontend/src/utils/storefrontErrorSanitizer.ts",
+        "frontend/src/components/feedback/AsyncState.tsx"
+      ]
+    },
+    {
+      "description": "Unrequested product image fallback behavior and \"Image unavailable\" messaging.",
+      "reason": "Not part of REQ-44/45/46; appears as unrelated UI enhancement in the diff summary.",
+      "evidence": [
+        "frontend-file-summaries.txt (ProductCard.tsx entry)"
+      ]
+    },
+    {
+      "description": "Unrequested currency formatting changes to display prices in INR across checkout/product/cart views.",
+      "reason": "Not part of REQ-44/45/46; appears as unrelated enhancement in the diff summary.",
+      "evidence": [
+        "frontend-file-summaries.txt (OrderSummary.tsx, ProductDetailPage.tsx, CartPage.tsx entries)"
+      ]
+    }
+  ],
+  "confidence": 0.62,
   "changed_files": [
     "frontend-file-summaries.txt",
-    "frontend/src/components/products/ProductCard.tsx",
-    "frontend/src/components/products/ProductImageGallery.tsx",
-    "frontend/src/utils/productImages.ts",
+    "frontend/src/api/shopHooks.ts",
+    "frontend/src/components/feedback/AsyncState.tsx",
+    "frontend/src/pages/CategoryPage.tsx",
+    "frontend/src/pages/ShopPage.tsx",
+    "frontend/src/utils/storefrontErrorSanitizer.ts",
     "project_state.json"
   ]
 }

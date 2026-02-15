@@ -9,9 +9,32 @@ interface AsyncStateProps {
   error?: Error | null;
   isEmpty?: boolean;
   emptyMessage?: string;
+  emptyContent?: React.ReactNode;
   onRetry?: () => void;
   children?: React.ReactNode;
   skeletonCount?: number;
+}
+
+/**
+ * Determines if an error message is user-friendly (short and non-technical).
+ */
+function isUserFriendlyMessage(message: string): boolean {
+  // User-friendly messages are typically short and don't contain technical jargon
+  if (message.length > 150) return false;
+  
+  const technicalTerms = [
+    'request id',
+    'principal',
+    'cbor',
+    '__principal__',
+    'reject code',
+    'canister id',
+    'http details',
+    'ingress_expiry',
+  ];
+  
+  const lowerMessage = message.toLowerCase();
+  return !technicalTerms.some(term => lowerMessage.includes(term));
 }
 
 export default function AsyncState({
@@ -20,6 +43,7 @@ export default function AsyncState({
   error,
   isEmpty,
   emptyMessage = 'No items found.',
+  emptyContent,
   onRetry,
   children,
   skeletonCount = 3,
@@ -35,12 +59,21 @@ export default function AsyncState({
   }
 
   if (isError) {
+    // Sanitize error message display
+    let displayMessage = 'Something went wrong. Please try again.';
+    
+    if (error?.message) {
+      if (isUserFriendlyMessage(error.message)) {
+        displayMessage = error.message;
+      }
+    }
+    
     return (
       <Alert variant="destructive">
         <AlertCircle className="h-4 w-4" />
         <AlertTitle>Error</AlertTitle>
         <AlertDescription className="mt-2">
-          {error?.message || 'Something went wrong. Please try again.'}
+          {displayMessage}
           {onRetry && (
             <Button onClick={onRetry} variant="outline" size="sm" className="mt-3">
               Retry
@@ -52,6 +85,9 @@ export default function AsyncState({
   }
 
   if (isEmpty) {
+    if (emptyContent) {
+      return <>{emptyContent}</>;
+    }
     return (
       <div className="text-center py-12">
         <p className="text-muted-foreground">{emptyMessage}</p>

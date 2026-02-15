@@ -7,8 +7,11 @@ import Principal "mo:core/Principal";
 import Order "mo:core/Order";
 import Time "mo:core/Time";
 
+
 import AccessControl "authorization/access-control";
 import MixinAuthorization "authorization/MixinAuthorization";
+
+// Run migration on upgrade.
 
 actor {
   let accessControlState = AccessControl.initState();
@@ -126,7 +129,7 @@ actor {
       {
         id = "cmf-earbuds";
         name = "CMF CC Bluetooth Earbuds With High Bass Sound In Ear TWS Black";
-        description = "\nSpecifications:\n- Brand: CMF\n- Product Code: AUDIOHEADPHONE-CMF-VALE-1782609C7A679FF\n- Warranty Type: No Warranty\n- Warranty: 6 months\n- Sales Package: 1 Earbuds\n- SUPC: SDL652881676";
+        description = "\nSpecifications:\n- Brand: CMF\n- Product Code: AUDIOHEADPHONE-CMF-VALE-1782609C7A679FF\n- Warranty Type: Seller's Warranty\n- Warranty: 6 months\n- Sales Package: 1 Earbuds\n- SUPC: SDL652881676";
         price = 700;
         category = #electronics;
         stock = 100;

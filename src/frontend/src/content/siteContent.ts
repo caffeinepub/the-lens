@@ -41,9 +41,10 @@
  * HOME PAGE - FEATURED SECTION:
  * - home.featured.heading: "Featured Products" section heading
  * - home.featured.subheading: Section subheading
- * - home.featured.emptyMessage: Message shown when no products available
+ * - home.featured.emptyMessage: Message shown when no products available (non-admin)
+ * - home.featured.emptyMessageAdmin: Message shown to admins when no products available
  * - home.featured.viewAllCta: "View All Products" button text
- * - home.featured.setupMessage: Loading message during shop initialization
+ * - home.featured.initializeButton: Initialize shop button text for admins
  * 
  * ABOUT PAGE:
  * - about.heading: "About" page main heading
@@ -108,8 +109,9 @@ export interface SiteContent {
       heading: string;
       subheading: string;
       emptyMessage: string;
+      emptyMessageAdmin: string;
       viewAllCta: string;
-      setupMessage: string;
+      initializeButton: string;
     };
   };
   about: {
@@ -182,9 +184,10 @@ const siteContent: SiteContent = {
     featured: {
       heading: 'Featured Products',
       subheading: 'Handpicked items just for you',
-      emptyMessage: 'No featured products available.',
+      emptyMessage: 'No products available at the moment. Please check back soon!',
+      emptyMessageAdmin: 'No products available. Initialize the shop to add sample products.',
       viewAllCta: 'View All Products',
-      setupMessage: 'Setting up shop...',
+      initializeButton: 'Initialize Shop',
     },
   },
   about: {
