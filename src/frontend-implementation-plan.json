@@ -1,21 +1,41 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Ensure CMF earbuds appears in Home featured products when published",
+  "title": "Robust product image resolution and URL-safe asset paths",
   "requirements": [
     {
-      "id": "REQ-27",
-      "summary": "Make Home featured products reliably include the published \"cmf-earbuds\" product when it exists, so it is visible on public storefront surfaces without manual admin republishing.",
+      "id": "REQ-28",
+      "summary": "Add robust image lookup fallbacks in ProductImageGallery and ProductCard (productId first, then productName) while preserving placeholder behavior when no images exist.",
       "acceptanceCriteria": [
-        "When the public product list includes a published product with id \"cmf-earbuds\", the Home page featured products section renders it within the featured grid (top 4).",
-        "When \"cmf-earbuds\" is absent from the public product list, the Home page featured products section behavior remains unchanged (still shows up to 4 products).",
-        "The Shop page and Category pages continue to render products based solely on the public product queries without requiring any admin interaction."
+        "On the CMF earbuds product detail page, the gallery shows the real images (not the placeholder) and thumbnails are selectable.",
+        "On Shop/Home/Category product cards, the CMF earbuds card shows the primary product image (not the placeholder) when images exist in the mapping.",
+        "If a product truly has no mapped images, the existing placeholder behavior remains unchanged."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/HomePage.tsx",
+          "path": "frontend/src/components/products/ProductImageGallery.tsx",
           "operation": "modify",
-          "description": "Update featured product selection logic to prioritize including the product with id \"cmf-earbuds\" (when present in the published products list) within the first 4 featured products, while preserving existing loading/initializeShop behavior and overall layout."
+          "description": "Update ProductImageGallery to attempt image lookup using getProductImages(productId) first and fall back to getProductImages(productName) when no images are found. Ensure the selected thumbnail index and imageError state remain correct when switching between ID-based and name-based results so thumbnails remain selectable; keep existing placeholder behavior when the final resolved image list is empty."
+        },
+        {
+          "path": "frontend/src/components/products/ProductCard.tsx",
+          "operation": "modify",
+          "description": "Update ProductCard to resolve the primary image by calling getPrimaryProductImage(product.id) and falling back to getPrimaryProductImage(product.name) if the ID-based lookup returns null/empty. Preserve the existing placeholder UI when no mapped image exists or when the image fails to load."
+        }
+      ]
+    },
+    {
+      "id": "REQ-29",
+      "summary": "URL-encode product image src values returned from productImages helpers so assets with spaces in filenames load correctly in the browser without renaming files.",
+      "acceptanceCriteria": [
+        "The browser requests image assets with correctly encoded URLs (spaces encoded) and images load successfully for mapped products.",
+        "No changes are required to the existing image filenames referenced in the mapping (e.g., `/assets/products/cmf-cc-earbuds/cmf 2-1.webp` remains the source of truth)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/utils/productImages.ts",
+          "operation": "modify",
+          "description": "Update product image helper(s) so that returned image src strings are safe to load in the browser when filenames contain spaces. Keep the mapping entries as the source-of-truth (unmodified filenames), but encode returned paths (e.g., via an internal helper that applies URL encoding appropriately) in getProductImages and getPrimaryProductImage so callers receive browser-safe src values."
         }
       ]
     }

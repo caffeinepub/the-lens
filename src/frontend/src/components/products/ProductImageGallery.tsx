@@ -9,7 +9,12 @@ interface ProductImageGalleryProps {
 }
 
 export default function ProductImageGallery({ productId, productName }: ProductImageGalleryProps) {
-  const images = getProductImages(productId);
+  // Try to get images by ID first, then fall back to name
+  let images = getProductImages(productId);
+  if (images.length === 0) {
+    images = getProductImages(productName);
+  }
+
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [imageError, setImageError] = useState(false);
 
@@ -47,7 +52,10 @@ export default function ProductImageGallery({ productId, productName }: ProductI
           {images.map((image, index) => (
             <button
               key={index}
-              onClick={() => setSelectedIndex(index)}
+              onClick={() => {
+                setSelectedIndex(index);
+                setImageError(false);
+              }}
               className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${
                 selectedIndex === index
                   ? 'border-accent shadow-md'
@@ -58,7 +66,6 @@ export default function ProductImageGallery({ productId, productName }: ProductI
                 src={image}
                 alt={`${productName} thumbnail ${index + 1}`}
                 className="w-full h-full object-cover"
-                onError={() => setImageError(true)}
               />
             </button>
           ))}

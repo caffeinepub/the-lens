@@ -15,7 +15,12 @@ interface ProductCardProps {
 export default function ProductCard({ product }: ProductCardProps) {
   const { addToCart } = useCart();
   const [imageError, setImageError] = useState(false);
-  const primaryImage = getPrimaryProductImage(product.id);
+  
+  // Try to get primary image by ID first, then fall back to name
+  let primaryImage = getPrimaryProductImage(product.id);
+  if (!primaryImage) {
+    primaryImage = getPrimaryProductImage(product.name);
+  }
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();

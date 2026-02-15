@@ -8,7 +8,7 @@
   "frontend/src/api/shopHooks.ts": "React Query hooks for backend integration including product fetching (all/by category/by ID), order creation, and shop initialization.",
   "frontend/src/components/layout/SiteHeader.tsx": "Sticky header with logo, navigation, cart indicator, and conditional admin link visible only to authenticated admins.",
   "frontend/src/components/layout/SiteFooter.tsx": "Footer with brand info, quick links, and contact section, now sourcing all text from centralized content config while preserving dynamic year and caffeine.ai attribution.",
-  "frontend/src/components/products/ProductCard.tsx": "Product card component updated to display prices in INR format using the formatINR utility, maintaining all existing functionality including image display with hover effects and fallback handling.",
+  "frontend/src/components/products/ProductCard.tsx": "Product card component displaying product info with image, price in INR format, and add-to-cart button, now resolving primary image by trying product ID first and falling back to product name.",
   "frontend/src/components/products/ProductGrid.tsx": "Responsive grid layout component for displaying product cards with empty state handling.",
   "frontend/src/components/products/ProductSearchBar.tsx": "Search and filter controls with keyword input and category dropdown for product browsing.",
   "frontend/src/components/checkout/OrderSummary.tsx": "Order summary component updated to display all line-item totals and subtotal in INR format using the formatINR utility for consistent currency display across checkout views.",
@@ -25,8 +25,8 @@
   "frontend/src/api/adminProductHooks.ts": "React Query hooks and mutations for admin product management (list all, create, update, publish/unpublish) with automatic invalidation of public product queries.",
   "frontend/src/components/feedback/AccessDeniedScreen.tsx": "Reusable access-denied UI component displayed to unauthorized users attempting to access admin-only screens.",
   "frontend/src/pages/AdminProductsPage.tsx": "Admin products management page with table view, create/edit dialog, and publish/unpublish controls, gated by admin authorization check.",
-  "frontend/src/utils/productImages.ts": "Centralized product image mapping utility updated to reference the 4 new CMF earbuds image files (cmf 2-1.webp, cmf 7-1.webp, cmf 1-1.webp, cmf 6-1.webp) with normalization and fallback logic for both ID and name matching.",
-  "frontend/src/components/products/ProductImageGallery.tsx": "Product detail image gallery component with primary image display, selectable thumbnails, and graceful fallback to placeholder when images are unavailable or fail to load.",
+  "frontend/src/utils/productImages.ts": "Centralized product image mapping utility with URL encoding helper that converts image paths with spaces to browser-safe URLs, supporting lookup by both product ID and name with normalization and fallback logic.",
+  "frontend/src/components/products/ProductImageGallery.tsx": "Product detail image gallery component with primary image display and selectable thumbnails, now attempting image lookup by product ID first and falling back to product name, with proper error state reset on thumbnail selection.",
   "frontend/src/components/products/ProductDescription.tsx": "Description renderer that formats multi-line product descriptions with key-value pairs displayed as structured data while preserving all original spec text.",
   "frontend/src/utils/currency.ts": "Currency formatting utility that converts numeric or bigint amounts to INR format using Intl.NumberFormat with the ₹ symbol and no decimal places."
 }

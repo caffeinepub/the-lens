@@ -1,11 +1,11 @@
 # Specification
 
 ## Summary
-**Goal:** Publish the existing “cmf-earbuds” product so it is visible across all public storefront surfaces.
+**Goal:** Fix missing/placeholder product images by making frontend image resolution more robust and ensuring mapped image URLs with spaces load correctly.
 
 **Planned changes:**
-- Update backend initialization so that after `initializeShop`, the existing product `cmf-earbuds` is set to `published=true` and appears in public listings and the Electronics category.
-- Add/adjust an upgrade-safe migration (only if needed) to ensure that if `cmf-earbuds` already exists with `published=false`, it is flipped to `published=true` without changing or deleting other products.
-- Preserve access rules: public callers cannot access unpublished products; admins can access products regardless of publish status.
+- Update `ProductImageGallery` to look up images by `productId` first, then fall back to `productName` when no images are found.
+- Update `ProductCard` to resolve the primary image using `product.id`, with a fallback to `product.name` if needed.
+- Update image helper(s) in `frontend/src/utils/productImages.ts` so returned `src` URLs are properly URL-encoded (e.g., spaces encoded) while keeping existing on-disk filenames unchanged.
 
-**User-visible outcome:** The CMF earbuds product appears on the public Shop page, Electronics category page, and Home featured products automatically (on both fresh deployments and upgrades), without requiring manual republishing in the admin UI.
+**User-visible outcome:** CMF earbuds images reliably appear in the product detail gallery (with selectable thumbnails) and on storefront/product cards when mapped images exist; products without mapped images continue to show the existing placeholder.

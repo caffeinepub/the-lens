@@ -21,6 +21,21 @@ const productImageMappings: ProductImageMapping[] = [
 ];
 
 /**
+ * Helper to encode image path for browser-safe URLs
+ */
+function encodeImagePath(path: string): string {
+  // Split path into segments, encode each filename component
+  const parts = path.split('/');
+  const encodedParts = parts.map((part, index) => {
+    // Don't encode the protocol or empty parts
+    if (index === 0 || part === '') return part;
+    // Encode each segment to handle spaces and special characters
+    return encodeURIComponent(part).replace(/%2F/g, '/');
+  });
+  return encodedParts.join('/');
+}
+
+/**
  * Get all images for a product by ID or name
  */
 export function getProductImages(productIdOrName: string): string[] {
@@ -33,7 +48,7 @@ export function getProductImages(productIdOrName: string): string[] {
   );
   
   if (exactMatch) {
-    return exactMatch.images;
+    return exactMatch.images.map(encodeImagePath);
   }
   
   // Try partial name match as fallback
@@ -42,7 +57,7 @@ export function getProductImages(productIdOrName: string): string[] {
     mapping.productId.toLowerCase().includes(normalized)
   );
   
-  return nameMatch ? nameMatch.images : [];
+  return nameMatch ? nameMatch.images.map(encodeImagePath) : [];
 }
 
 /**
