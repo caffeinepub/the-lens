@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --radius: 0.5rem;
+        /* Warm cream background with charcoal text */
+        --background: 0.98 0.01 60;
+        --foreground: 0.25 0.02 30;
+        --card: 1 0 0;
+        --card-foreground: 0.25 0.02 30;
+        --popover: 1 0 0;
+        --popover-foreground: 0.25 0.02 30;
+        /* Deep charcoal primary with amber undertones */
+        --primary: 0.28 0.03 40;
+        --primary-foreground: 0.98 0.01 60;
+        /* Warm amber accent */
+        --secondary: 0.92 0.01 80;
+        --secondary-foreground: 0.28 0.03 40;
+        --muted: 0.94 0.01 70;
+        --muted-foreground: 0.50 0.02 40;
+        /* Vibrant amber for accents and CTAs */
+        --accent: 0.75 0.15 60;
+        --accent-foreground: 0.98 0.01 60;
+        --destructive: 0.55 0.22 25;
+        --destructive-foreground: 0.98 0.01 60;
+        --border: 0.90 0.01 70;
+        --input: 0.90 0.01 70;
+        --ring: 0.75 0.15 60;
+    }
+
+    .dark {
+        /* Dark charcoal background */
+        --background: 0.18 0.02 30;
+        --foreground: 0.95 0.01 70;
+        --card: 0.22 0.02 35;
+        --card-foreground: 0.95 0.01 70;
+        --popover: 0.20 0.02 32;
+        --popover-foreground: 0.95 0.01 70;
+        /* Light cream for dark mode primary */
+        --primary: 0.92 0.01 80;
+        --primary-foreground: 0.22 0.02 35;
+        --secondary: 0.28 0.03 40;
+        --secondary-foreground: 0.95 0.01 70;
+        --muted: 0.30 0.02 38;
+        --muted-foreground: 0.70 0.01 60;
+        /* Bright amber accent for dark mode */
+        --accent: 0.78 0.18 55;
+        --accent-foreground: 0.18 0.02 30;
+        --destructive: 0.60 0.24 28;
+        --destructive-foreground: 0.95 0.01 70;
+        --border: 0.30 0.02 38;
+        --input: 0.30 0.02 38;
+        --ring: 0.78 0.18 55;
+    }
+
+    * {
+        @apply border-border;
+    }
+    body {
+        @apply bg-background text-foreground;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+}
+
+@layer components {
+    .container-custom {
+        @apply container mx-auto px-4 sm:px-6 lg:px-8;
+    }
+}

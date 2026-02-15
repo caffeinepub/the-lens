@@ -1,0 +1,24 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-ensure-the-existing-product-with-id-cmf-earbuds-cmf-cc-bluetooth-earbuds-with-high-bass-sound-in-ear-tws-black-is-published-published-true-so-it-is-visible-on-all-public-storefront-surfaces-shop-page-category-page-and-home-featured-products-this-must-work-for-both-1-fresh-deployments-after-an-admin-runs-initializeshop-and-2-upgrades-where-the-product-already-exists-in-canister-state-and-may-currently-be-unpublished",
+      "featureTitle": "Ensure the existing product with id \"cmf-earbuds\" (\"CMF CC Bluetooth Earbuds With High Bass Sound In Ear TWS Black\") is published (published=true) so it is visible on all public storefront surfaces (Shop page, Category page, and Home featured products). This must work for both (1) fresh deployments after an admin runs initializeShop and (2) upgrades where the product already exists in canister state and may currently be unpublished.",
+      "files": [
+        "frontend/src/pages/HomePage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-27"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

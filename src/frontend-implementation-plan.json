@@ -1,0 +1,23 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Ensure CMF earbuds appears in Home featured products when published",
+  "requirements": [
+    {
+      "id": "REQ-27",
+      "summary": "Make Home featured products reliably include the published \"cmf-earbuds\" product when it exists, so it is visible on public storefront surfaces without manual admin republishing.",
+      "acceptanceCriteria": [
+        "When the public product list includes a published product with id \"cmf-earbuds\", the Home page featured products section renders it within the featured grid (top 4).",
+        "When \"cmf-earbuds\" is absent from the public product list, the Home page featured products section behavior remains unchanged (still shows up to 4 products).",
+        "The Shop page and Category pages continue to render products based solely on the public product queries without requiring any admin interaction."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/HomePage.tsx",
+          "operation": "modify",
+          "description": "Update featured product selection logic to prioritize including the product with id \"cmf-earbuds\" (when present in the published products list) within the first 4 featured products, while preserving existing loading/initializeShop behavior and overall layout."
+        }
+      ]
+    }
+  ]
+}

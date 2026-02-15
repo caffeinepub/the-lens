@@ -1,0 +1,50 @@
+{
+  "kind": "build_request",
+  "title": "Publish the CMF earbuds product on the public storefront",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-27",
+      "text": "Ensure the existing product with id \"cmf-earbuds\" (\"CMF CC Bluetooth Earbuds With High Bass Sound In Ear TWS Black\") is published (published=true) so it is visible on all public storefront surfaces (Shop page, Category page, and Home featured products). This must work for both (1) fresh deployments after an admin runs initializeShop and (2) upgrades where the product already exists in canister state and may currently be unpublished.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "publish the product"
+        ]
+      },
+      "acceptanceCriteria": [
+        "On a fresh deployment, after the admin runs initializeShop, the product \"cmf-earbuds\" has published=true when retrieved via adminGetAllProducts, and it appears in the public product list (getAllProducts) and Electronics category list (getProductsByCategory(#electronics)).",
+        "On an upgraded canister where \"cmf-earbuds\" already exists with published=false, the upgrade process results in the product having published=true without deleting or altering other products.",
+        "After the publish change, the public UI (Shop, Electronics category, and Home featured products) shows the CMF earbuds product without requiring manual republishing in the Admin Products page.",
+        "Non-admin callers cannot access unpublished products via getProduct; admin callers can still access products regardless of publish status."
+      ]
+    }
+  ],
+  "constraints": [
+    "Respect the single-actor backend architecture (all Motoko logic in backend/main.mo).",
+    "Only introduce/update backend/migration.mo if required to safely apply the publish change on upgrades (conditional migration policy).",
+    "Do not edit files under frontend/src/components/ui or any other frontend immutable paths listed in SYSTEM_CONTEXT."
+  ],
+  "nonGoals": [
+    "Adding new products beyond publishing the existing \"cmf-earbuds\" product.",
+    "Changing product price, stock, description, or images as part of this request (except as needed to set published=true).",
+    "Adding new authentication methods beyond existing Internet Identity admin gating."
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [],
+    "goalsToRemove": [],
+    "preferencesToAdd": [],
+    "preferencesToRemove": [],
+    "miscToAdd": [],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
+  }
+}

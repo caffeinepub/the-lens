@@ -1,0 +1,284 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 21,
+  "summary": "Build a company website for 'The Lens' to sell trending/viral products, including electronics and home decor.",
+  "architectural_notes": [
+    "Custom domain setup on Internet Computer requires DNS records (CNAME/TXT + ACME challenge) and adding a .well-known/ic-domains file to the frontend build, followed by redeploy for SSL."
+  ],
+  "known_issues": [
+    "Storefront only shows products with published=true; CMF earbuds product exists but was not visible because it was unpublished."
+  ],
+  "isFixRequest": false,
+  "existing_features": [
+    {
+      "id": "feature-create-a-public-marketing-storefront-website-for-the-company-name-the-lens-focused-on-selling-trending-viral-products-across-categories-like-electronics-and-home-decor-with-clear-navigation-featured-sections-and-calls-to-action-to-browse-products",
+      "title": "Create a public marketing + storefront website for the company name \"The Lens\" focused on selling trending/viral products across categories like electronics and home decor, with clear navigation, featured sections, and calls-to-action to browse products.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-product-browsing-ux-category-filtering-at-minimum-electronics-and-home-decor-keyword-search-and-product-detail-pages-that-show-images-title-price-short-description-and-an-add-to-cart-action",
+      "title": "Implement product browsing UX: category filtering (at minimum Electronics and Home Decor), keyword search, and product detail pages that show images, title, price, short description, and an Add-to-Cart action.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-shopping-cart-flow-on-the-frontend-add-remove-items-change-quantity-display-subtotal-and-proceed-to-a-checkout-form-that-collects-customer-details-name-email-phone-optional-shipping-address-and-order-notes",
+      "title": "Implement a shopping cart flow on the frontend: add/remove items, change quantity, display subtotal, and proceed to a checkout form that collects customer details (name, email, phone optional, shipping address) and order notes.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-connect-the-frontend-to-the-backend-using-react-query-for-product-listing-product-details-and-order-creation-include-user-feedback-states-loading-empty-error-success",
+      "title": "Connect the frontend to the backend using React Query for: product listing, product details, and order creation; include user feedback states (loading, empty, error, success).",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-define-and-apply-a-cohesive-visual-theme-for-the-lens-suitable-for-a-modern-trending-products-brand-distinct-color-palette-typography-spacing-and-component-styling-and-apply-it-consistently-across-pages",
+      "title": "Define and apply a cohesive visual theme for \"The Lens\" suitable for a modern trending-products brand (distinct color palette, typography, spacing, and component styling) and apply it consistently across pages.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-generated-static-brand-assets-and-wire-them-into-the-ui-logo-hero-banner-imagery-category-images-by-storing-them-under-frontend-public-assets-generated-and-referencing-them-directly-from-the-frontend-no-backend-image-serving",
+      "title": "Add generated static brand assets and wire them into the UI (logo + hero/banner imagery + category images) by storing them under frontend/public/assets/generated and referencing them directly from the frontend (no backend image serving).",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-centralized-frontend-content-configuration-module-that-contains-the-editable-marketing-copy-and-contact-details-used-across-the-site-e-g-brand-name-hero-badge-title-description-category-tile-headings-descriptions-about-page-paragraphs-footer-blurb-and-contact-info-like-email-phone-address-and-refactor-existing-pages-components-to-read-their-displayed-text-from-this-module",
+      "title": "Create a centralized frontend content configuration module that contains the editable marketing copy and contact details used across the site (e.g., brand name, hero badge/title/description, category tile headings/descriptions, About page paragraphs, footer blurb, and contact info like email/phone/address), and refactor existing pages/components to read their displayed text from this module.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-simple-developer-facing-documentation-section-readme-snippet-or-code-comments-inside-the-content-config-file-describing-exactly-which-fields-to-edit-to-change-the-website-s-visible-text-and-contact-information-and-where-those-fields-appear-in-the-ui",
+      "title": "Add a simple developer-facing documentation section (README snippet or code comments inside the content config file) describing exactly which fields to edit to change the website’s visible text and contact information, and where those fields appear in the UI.",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-frontend-admin-products-page-that-allows-an-authenticated-admin-to-create-products-edit-product-fields-and-publish-unpublish-products-from-the-ui",
+      "title": "Add a frontend admin Products page that allows an authenticated admin to create products, edit product fields, and publish/unpublish products from the UI.",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-wire-the-new-admin-product-publishing-flows-into-the-frontend-data-layer-react-query-ensuring-storefront-pages-automatically-reflect-publish-unpublish-changes",
+      "title": "Wire the new admin product publishing flows into the frontend data layer (React Query), ensuring storefront pages automatically reflect publish/unpublish changes.",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-email-address-displayed-in-the-contact-section-on-the-about-contact-page-the-element-at-xpath-html-1-body-1-div-1-div-1-main-1-div-1-div-1-div-1-section-2-div-1-to-official-thelens-gmail-com-by-changing-the-centralized-content-value-used-for-that-email",
+      "title": "Update the email address displayed in the Contact section on the About/Contact page (the element at XPath /html[1]/body[1]/div[1]/div[1]/main[1]/div[1]/div[1]/div[1]/section[2]/div[1]) to \"official.thelens@gmail.com\" by changing the centralized content value used for that email.",
+      "reqIds": [
+        "REQ-15"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-the-call-us-phone-and-visit-us-address-sections-from-the-about-contact-page-contact-cards-so-only-the-email-contact-card-remains-visible",
+      "title": "Remove the \"Call Us\" (phone) and \"Visit Us\" (address) sections from the About/Contact page contact cards so only the email contact card remains visible.",
+      "reqIds": [
+        "REQ-16"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-on-the-about-contact-page-add-an-owner-credit-line-at-the-end-of-the-about-section-render-the-existing-built-with-using-caffeine-ai-line-in-the-about-section-with-a-clickable-caffeine-ai-link-and-directly-below-it-display-the-text-owner-name-vaibhav-sharma",
+      "title": "On the About/Contact page, add an owner credit line at the end of the About section: render the existing “Built with using caffeine.ai” line in the About section (with a clickable caffeine.ai link), and directly below it display the text “OWNER NAME - VAIBHAV SHARMA.”",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-set-the-new-product-s-fields-as-follows-category-electronics-name-cmf-cc-bluetooth-earbuds-with-high-bass-sound-in-ear-tws-black-description-the-user-provided-specification-text-reformatted-into-readable-english-multi-line-or-bullet-style-while-preserving-all-provided-values-including-supc-sdl652881676-if-price-stock-or-published-status-cannot-be-derived-from-the-user-request-default-them-safely-and-keep-the-product-editable-via-the-existing-admin-products-page",
+      "title": "Set the new product’s fields as follows: category = Electronics; name = \"CMF CC Bluetooth Earbuds With High Bass Sound In Ear TWS Black\"; description = the user-provided specification text reformatted into readable English (multi-line or bullet-style) while preserving all provided values (including SUPC: SDL652881676). If price, stock, or published status cannot be derived from the user request, default them safely and keep the product editable via the existing Admin Products page.",
+      "reqIds": [
+        "REQ-19"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-the-4-user-uploaded-product-images-cmf-1-webp-cmf-2-webp-cmf-6-webp-cmf-7-webp-to-the-frontend-as-static-assets-and-render-them-on-the-product-detail-page-for-this-product-at-minimum-show-a-primary-image-plus-selectable-thumbnails-or-a-simple-gallery",
+      "title": "Add the 4 user-uploaded product images (cmf 1.webp, cmf 2.webp, cmf 6.webp, cmf 7.webp) to the frontend as static assets and render them on the product detail page for this product (at minimum: show a primary image plus selectable thumbnails or a simple gallery).",
+      "reqIds": [
+        "REQ-20"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-product-list-cards-shop-page-category-page-and-featured-products-on-home-page-so-that-if-a-product-has-mapped-images-available-the-first-image-is-shown-in-the-product-card-instead-of-the-current-placeholder-block-otherwise-keep-the-existing-placeholder-behavior",
+      "title": "Update product list cards (Shop page, Category page, and Featured products on Home page) so that if a product has mapped images available, the first image is shown in the product card instead of the current placeholder block; otherwise keep the existing placeholder behavior.",
+      "reqIds": [
+        "REQ-21"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-the-4-newly-uploaded-product-images-as-static-frontend-assets-and-update-the-cmf-earbuds-image-mapping-to-use-these-exact-filenames-cmf-2-1-webp-cmf-7-1-webp-cmf-1-1-webp-cmf-6-1-webp-store-under-frontend-public-assets-products-cmf-cc-earbuds",
+      "title": "Add the 4 newly uploaded product images as static frontend assets and update the CMF earbuds image mapping to use these exact filenames: \"cmf 2-1.webp\", \"cmf 7-1.webp\", \"cmf 1-1.webp\", \"cmf 6-1.webp\" (store under frontend/public/assets/products/cmf-cc-earbuds/).",
+      "reqIds": [
+        "REQ-25"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-all-storefront-price-displays-to-use-inr-formatting-for-the-ui-at-minimum-productcard-productdetailpage-cartpage-and-checkout-ordersummary-so-the-cmf-earbuds-shows-as-700-or-700-inr-if-a-suffix-is-used-and-remove-the-symbol-from-these-displays",
+      "title": "Update all storefront price displays to use INR formatting for the UI (at minimum: ProductCard, ProductDetailPage, CartPage, and checkout OrderSummary) so the CMF earbuds shows as ₹700 (or \"₹700 INR\" if a suffix is used), and remove the \"$\" symbol from these displays.",
+      "reqIds": [
+        "REQ-26"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-the-existing-product-with-id-cmf-earbuds-cmf-cc-bluetooth-earbuds-with-high-bass-sound-in-ear-tws-black-is-published-published-true-so-it-is-visible-on-all-public-storefront-surfaces-shop-page-category-page-and-home-featured-products-this-must-work-for-both-1-fresh-deployments-after-an-admin-runs-initializeshop-and-2-upgrades-where-the-product-already-exists-in-canister-state-and-may-currently-be-unpublished",
+      "title": "Ensure the existing product with id \"cmf-earbuds\" (\"CMF CC Bluetooth Earbuds With High Bass Sound In Ear TWS Black\") is published (published=true) so it is visible on all public storefront surfaces (Shop page, Category page, and Home featured products). This must work for both (1) fresh deployments after an admin runs initializeShop and (2) upgrades where the product already exists in canister state and may currently be unpublished.",
+      "reqIds": [
+        "REQ-27"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Create an e-commerce company website for 'The Lens' to sell trending/viral products (electronics, home decor, etc.).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Add backend data models and APIs to store and serve a product catalog (including categories like Electronics and Home Decor) and to accept checkout submissions by creating an order record.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Enable custom domain support for the deployed website (DNS configuration + canister domain verification/SSL).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Add a way to publish products on the site (create/update product entries and control whether they are visible in the storefront).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Extend the backend product model to support publishing/unpublishing products, so admins can control whether a product is visible in the public storefront.",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Update backend product query APIs used by the storefront to return only published products, while also providing an admin-only API to list all products (published and unpublished).",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "Add backend admin-only APIs to create new products and update existing products, including the ability to set or toggle publish status.",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-11",
+      "summary": "Update site contact email address to official.thelens@gmail.com wherever the marketing/contact email is displayed (e.g., footer, contact section, checkout email field placeholder if applicable).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-12",
+      "summary": "Remove the \"Call Us\" section and the \"Visit Us\" section from the site (About/Contact page or wherever they appear).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-13",
+      "summary": "Add an owner credit line to the About section: below the “Built with using caffeine.ai” text, display “OWNER NAME - VAIBHAV SHARMA.”",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-14",
+      "summary": "Create a new Electronics product entry in the backend catalog for \"CMF CC Bluetooth Earbuds With High Bass Sound In Ear TWS Black\" using the existing admin product APIs, ensuring it is added in a way that does not require manual data entry through the UI after deployment.",
+      "reqIds": [
+        "REQ-18"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-15",
+      "summary": "Publish the existing CMF earbuds product so it becomes visible on the public storefront (set published=true).",
+      "reqIds": [],
+      "status": "in_progress"
+    },
+    {
+      "id": "AR-16",
+      "summary": "Set the existing product with id \"cmf-earbuds\" (\"CMF CC Bluetooth Earbuds With High Bass Sound In Ear TWS Black\") to published=true so it becomes visible on the public storefront (Shop page, Category page, and Home featured products). This must work both for fresh deployments (initial product seed) and for upgrades where the product already exists in canister state.",
+      "reqIds": [
+        "REQ-22"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-17",
+      "summary": "Update the CMF earbuds product details: set price to 700 INR, add warranty info (6 months), and add the user-attached product pictures to be shown on the product detail page (and wherever product images are used).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-18",
+      "summary": "Update the backend product record for product id \"cmf-earbuds\" so its price is 700 (representing 700 INR) and its description includes a clear warranty line: \"Warranty: 6 months\".",
+      "reqIds": [
+        "REQ-23"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-19",
+      "summary": "Ensure the backend update in REQ-23 applies both for fresh deployments (shop initialization/seed data) and for upgrades where the \"cmf-earbuds\" product already exists in canister state (apply a safe, conditional migration/upgrade step to update price/description without deleting other products).",
+      "reqIds": [
+        "REQ-24"
+      ],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "The Lens",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

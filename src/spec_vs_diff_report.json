@@ -1,0 +1,33 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-15T16:46:48.286Z",
+  "summary": "Diff publishes the \"cmf-earbuds\" product in the fresh-deployment initialization list and adds frontend logic to prioritize it in Home featured products, but there is no clear evidence of an upgrade-safe migration or upgrade hook that flips an already-existing unpublished \"cmf-earbuds\" to published=true during canister upgrade (as required by REQ-27).",
+  "missing_requirements": [
+    {
+      "id": "REQ-27",
+      "requirement": "On upgrades where the product \"cmf-earbuds\" already exists in canister state and may be unpublished, the upgrade process must result in the product having published=true without deleting or altering other products.",
+      "reason": "The diff only shows initializeShop seeding \"cmf-earbuds\" with published=true (fresh deployments). There is no evidence of any migration/upgrade logic (e.g., in backend/migration.mo or in pre/post-upgrade code) that updates an existing stored product record on upgrade.",
+      "evidence": [
+        "backend/main.mo (shows initializeShop seeds published=true but no shown upgrade logic due to truncation)",
+        "File diff summary shows no backend/migration.mo changes"
+      ]
+    }
+  ],
+  "hallucinated_features": [
+    {
+      "description": "Homepage featured-products logic that prioritizes displaying the CMF earbuds within the first 4 featured products.",
+      "reason": "REQ-27 requires the product to be published and thus appear on public surfaces; it does not ask for special prioritization/order on the Home featured products list.",
+      "evidence": [
+        "frontend/src/pages/HomePage.tsx"
+      ]
+    }
+  ],
+  "confidence": 0.66,
+  "changed_files": [
+    "backend/main.mo",
+    "frontend-file-summaries.txt",
+    "frontend/src/pages/HomePage.tsx",
+    "project_state.json"
+  ]
+}

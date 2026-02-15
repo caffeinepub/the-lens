@@ -1,0 +1,38 @@
+{
+  "kind": "coverage_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-15T16:46:48.289Z",
+  "sources": {
+    "buildRequest": true,
+    "implementationPlan": true
+  },
+  "requirements": {
+    "total": 1,
+    "implemented": 1,
+    "items": [
+      {
+        "id": "REQ-27",
+        "summary": "Ensure the existing product with id \"cmf-earbuds\" (\"CMF CC Bluetooth Earbuds With High Bass Sound In Ear TWS Black\") is published (published=true) so it is visible on all public storefront surfaces (Shop page, Category page, and Home featured products). This must work for both (1) fresh deployments after an admin runs initializeShop and (2) upgrades where the product already exists in canister state and may currently be unpublished.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/HomePage.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/HomePage.tsx"
+        ]
+      }
+    ]
+  },
+  "changedFiles": [
+    "backend/main.mo",
+    "build-request.json",
+    "feature_evidence.json",
+    "frontend-file-summaries.txt",
+    "frontend-implementation-plan.json",
+    "frontend/src/pages/HomePage.tsx",
+    "project_state.json",
+    "scratch/component-selection.json",
+    "spec.md",
+    "spec_vs_diff_report.json"
+  ]
+}
