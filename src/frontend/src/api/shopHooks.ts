@@ -10,7 +10,9 @@ export function useGetAllProducts() {
   return useQuery<Product[], Error>({
     queryKey: queryKeys.products.all,
     queryFn: async () => {
-      if (!actor) throw new Error('Actor not available');
+      if (!actor) {
+        throw sanitizeStorefrontError(new Error('Actor not available'));
+      }
       try {
         return await actor.getAllProducts();
       } catch (error) {
@@ -27,7 +29,9 @@ export function useGetProductsByCategory(category: Category) {
   return useQuery<Product[], Error>({
     queryKey: queryKeys.products.byCategory(category),
     queryFn: async () => {
-      if (!actor) throw new Error('Actor not available');
+      if (!actor) {
+        throw sanitizeStorefrontError(new Error('Actor not available'));
+      }
       try {
         return await actor.getProductsByCategory(category);
       } catch (error) {
@@ -44,8 +48,14 @@ export function useGetProduct(productId: string) {
   return useQuery<Product>({
     queryKey: queryKeys.products.detail(productId),
     queryFn: async () => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.getProduct(productId);
+      if (!actor) {
+        throw sanitizeStorefrontError(new Error('Actor not available'));
+      }
+      try {
+        return await actor.getProduct(productId);
+      } catch (error) {
+        throw sanitizeStorefrontError(error as Error);
+      }
     },
     enabled: !!actor && !actorFetching && !!productId,
     retry: false,
@@ -58,8 +68,14 @@ export function useCreateOrder() {
 
   return useMutation({
     mutationFn: async (items: OrderItem[]) => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.createOrder(items);
+      if (!actor) {
+        throw sanitizeStorefrontError(new Error('Actor not available'));
+      }
+      try {
+        return await actor.createOrder(items);
+      } catch (error) {
+        throw sanitizeStorefrontError(error as Error);
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.orders.all });
@@ -73,8 +89,14 @@ export function useInitializeShop() {
 
   return useMutation({
     mutationFn: async () => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.initializeShop();
+      if (!actor) {
+        throw sanitizeStorefrontError(new Error('Actor not available'));
+      }
+      try {
+        return await actor.initializeShop();
+      } catch (error) {
+        throw sanitizeStorefrontError(error as Error);
+      }
     },
     onSuccess: () => {
       // Invalidate all product queries so the UI refreshes with new products

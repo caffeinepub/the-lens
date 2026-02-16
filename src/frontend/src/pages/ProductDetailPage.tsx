@@ -16,7 +16,7 @@ import { formatINR } from '../utils/currency';
 export default function ProductDetailPage() {
   const { productId } = useParams({ from: '/product/$productId' });
   const navigate = useNavigate();
-  const { data: product, isLoading, isError, error } = useGetProduct(productId);
+  const { data: product, isLoading, isError, error, refetch } = useGetProduct(productId);
   const { addToCart } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [isAdding, setIsAdding] = useState(false);
@@ -33,6 +33,9 @@ export default function ProductDetailPage() {
 
   const categoryName = product?.category === 'electronics' ? 'Electronics' : 'Home Decor';
 
+  // Check if error is a "not found" error
+  const isNotFound = error?.message?.toLowerCase().includes('not found');
+
   return (
     <div className="py-12">
       <div className="container-custom">
@@ -47,10 +50,11 @@ export default function ProductDetailPage() {
 
         <AsyncState
           isLoading={isLoading}
-          isError={isError}
+          isError={isError && !isNotFound}
           error={error}
-          isEmpty={!product}
+          isEmpty={!product || isNotFound}
           emptyMessage="Product not found."
+          onRetry={() => refetch()}
           skeletonCount={1}
         >
           {product && (

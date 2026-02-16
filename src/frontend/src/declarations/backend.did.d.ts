@@ -36,7 +36,12 @@ export interface Product {
 }
 export type ProductId = string;
 export type Time = bigint;
-export interface UserProfile { 'name' : string }
+export interface UserProfile {
+  'name' : string,
+  'email' : string,
+  'phone' : string,
+  'phoneVerified' : boolean,
+}
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
   { 'guest' : null };
@@ -59,7 +64,10 @@ export interface _SERVICE {
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'initializeShop' : ActorMethod<[], undefined>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
+  'isPhoneVerified' : ActorMethod<[string], boolean>,
+  'requestPhoneVerification' : ActorMethod<[string], undefined>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
+  'verifyPhoneVerificationCode' : ActorMethod<[string, string], boolean>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

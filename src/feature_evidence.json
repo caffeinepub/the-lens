@@ -1,47 +1,4 @@
 {
   "kind": "feature_evidence_report",
-  "features": [
-    {
-      "featureId": "feature-detect-internet-computer-replica-rejection-errors-that-indicate-the-backend-canister-is-stopped-e-g-reject-code-5-error-code-ic0508-message-includes-is-stopped-and-or-callcontextmanager-and-convert-them-into-a-short-user-friendly-english-error-message-for-storefront-product-browsing-queries-at-minimum-the-queries-used-by-home-featured-products-shop-page-and-category-page",
-      "featureTitle": "Detect Internet Computer replica rejection errors that indicate the backend canister is stopped (e.g., Reject code 5 / error code IC0508 / message includes \"is stopped\" and/or \"CallContextManager\") and convert them into a short, user-friendly English error message for storefront product browsing queries (at minimum the queries used by Home featured products, Shop page, and Category page).",
-      "files": [
-        "frontend/src/api/shopHooks.ts",
-        "frontend/src/pages/CategoryPage.tsx",
-        "frontend/src/pages/ShopPage.tsx",
-        "frontend/src/utils/storefrontErrorSanitizer.ts"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-44"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-ensure-all-user-facing-error-text-introduced-or-modified-as-part-of-this-fix-is-written-in-english-including-error-titles-descriptions-and-retry-guidance-and-does-not-include-internal-codes-like-request-ids-reject-codes-cbor-details-or-principals",
-      "featureTitle": "Ensure all user-facing error text introduced or modified as part of this fix is written in English (including error titles, descriptions, and retry guidance) and does not include internal codes like request IDs, reject codes, CBOR details, or principals.",
-      "files": [
-        "frontend/src/components/feedback/AsyncState.tsx",
-        "frontend/src/utils/storefrontErrorSanitizer.ts"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-46"
-      ],
-      "confidence": "high"
-    }
-  ]
+  "features": []
 }

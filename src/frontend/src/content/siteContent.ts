@@ -15,6 +15,7 @@
  * - nav.electronics: Header "Electronics" link label
  * - nav.homeDecor: Header "Home Decor" link label
  * - nav.about: Header "About" link label
+ * - nav.login: Header "Login" link label
  * - nav.admin: Header "Admin" link label (visible only to admins)
  * 
  * HOME PAGE - HERO SECTION:
@@ -77,6 +78,7 @@ export interface SiteContent {
     electronics: string;
     homeDecor: string;
     about: string;
+    login: string;
     admin: string;
   };
   home: {
@@ -152,6 +154,7 @@ const siteContent: SiteContent = {
     electronics: 'Electronics',
     homeDecor: 'Home Decor',
     about: 'About',
+    login: 'Login',
     admin: 'Admin',
   },
   home: {

@@ -12,7 +12,7 @@ import { getContent } from '../content/siteContent';
 
 export default function HomePage() {
   const navigate = useNavigate();
-  const { data: products, isLoading, isError, error } = useGetAllProducts();
+  const { data: products, isLoading, isError, error, refetch } = useGetAllProducts();
   const { data: isAdmin, isLoading: isAdminLoading } = useIsCallerAdmin();
   const initShop = useInitializeShop();
   const content = getContent();
@@ -68,7 +68,7 @@ export default function HomePage() {
           {initShop.isError && (
             <Alert variant="destructive" className="mt-4 max-w-md mx-auto">
               <AlertDescription>
-                Failed to initialize shop. Please try again or check your permissions.
+                {initShop.error?.message || 'Failed to initialize shop. Please try again.'}
               </AlertDescription>
             </Alert>
           )}
@@ -198,6 +198,7 @@ export default function HomePage() {
             error={error}
             isEmpty={featuredProducts.length === 0}
             emptyContent={renderEmptyState()}
+            onRetry={() => refetch()}
           >
             <ProductGrid products={featuredProducts} />
             {featuredProducts.length > 0 && (

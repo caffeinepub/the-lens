@@ -50,15 +50,27 @@ function getBasePath(): string {
   }
 
   // For IC, paths typically look like: /<canister-id>/...
-  // We want to preserve the canister ID part
+  // Canister IDs have a specific pattern: they contain multiple hyphens and often end with -cai
+  // or follow base32-like patterns (e.g., rrkah-fqaaa-aaaaa-aaaaq-cai)
   const parts = pathname.split('/').filter(Boolean);
   
-  // If the first part looks like a canister ID (alphanumeric with hyphens)
-  // or if we're in a nested path, use the appropriate base
-  if (parts.length > 0 && /^[a-z0-9-]+$/.test(parts[0])) {
-    return '/' + parts[0] + '/';
+  // Only treat the first segment as a canister ID if it matches IC canister patterns:
+  // - Contains at least 2 hyphens (canister IDs are hyphen-separated base32)
+  // - Ends with -cai (common IC canister suffix)
+  // - Is longer than typical route names (canister IDs are typically 20+ chars)
+  if (parts.length > 0) {
+    const firstSegment = parts[0];
+    const hyphenCount = (firstSegment.match(/-/g) || []).length;
+    const looksLikeCanisterId = 
+      (hyphenCount >= 2 && firstSegment.length > 15) || 
+      firstSegment.endsWith('-cai');
+    
+    if (looksLikeCanisterId) {
+      return '/' + firstSegment + '/';
+    }
   }
 
+  // Default to root for normal routes like /product, /shop, etc.
   return '/';
 }
 

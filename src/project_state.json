@@ -1,9 +1,10 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 35,
+  "projectStateVersion": 49,
   "summary": "Build a company website for 'The Lens' to sell trending/viral products, including electronics and home decor.",
   "architectural_notes": [
-    "Custom domain setup on Internet Computer requires DNS records (CNAME/TXT + ACME challenge) and adding a .well-known/ic-domains file to the frontend build, followed by redeploy for SSL."
+    "Custom domain setup on Internet Computer requires DNS records (CNAME/TXT + ACME challenge) and adding a .well-known/ic-domains file to the frontend build, followed by redeploy for SSL.",
+    "Phone verification will require integrating an SMS/OTP provider (e.g., Twilio) and adding an OTP send/verify flow + secure session/auth handling (frontend UI + backend endpoints/canister methods)."
   ],
   "known_issues": [
     "Storefront only shows products with published=true; CMF earbuds product exists but was not visible because it was unpublished.",
@@ -12,7 +13,10 @@
     "After deploying Version 13, the user still cannot see the product images (image rendering issue persists).",
     "After deploying Version 14, the user still cannot see the product images (image rendering issue persists).",
     "After deploying Version 15, the user still cannot see the product images (image rendering issue persists).",
-    "Storefront error: IC replica rejection (Reject code 5, IC0508) because backend canister dy7ez-6yaaa-aaaal-qufya-cai is stopped; query getProductsByCategory fails."
+    "Storefront error: IC replica rejection (Reject code 5, IC0508) because backend canister dy7ez-6yaaa-aaaal-qufya-cai is stopped; query getProductsByCategory fails.",
+    "After deploying Version 17, storefront still errors; user sees message: \"The store service is temporarily unavailable. Please try again in a moment.\" (different from prior error).",
+    "After deploying Version 18, storefront shows \"failed to load images\" (product image load failure persists / new explicit error message observed).",
+    "After deploying Version 19, storefront shows error message: \"The store service is temporarily unavailable. Please try again in a moment.\" (issue persists)."
   ],
   "isFixRequest": true,
   "existing_features": [
@@ -279,6 +283,110 @@
         "REQ-46"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-ensure-all-public-storefront-data-fetching-hooks-sanitize-backend-replica-errors-into-user-friendly-english-messages-including-cases-where-the-actor-is-not-yet-available-apply-the-existing-sanitizestorefronterror-behavior-consistently-to-usegetproduct-usecreateorder-and-useinitializeshop-and-also-to-the-actor-not-available-path-in-product-queries-so-users-never-see-technical-or-inconsistent-errors-across-pages",
+      "title": "Ensure all public storefront data-fetching hooks sanitize backend/replica errors into user-friendly English messages, including cases where the actor is not yet available. Apply the existing `sanitizeStorefrontError()` behavior consistently to `useGetProduct`, `useCreateOrder`, and `useInitializeShop` (and also to the 'Actor not available' path in product queries) so users never see technical or inconsistent errors across pages.",
+      "reqIds": [
+        "REQ-47"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-consistent-retryable-error-ux-for-the-service-temporarily-unavailable-storefront-state-on-home-shop-and-category-pages-the-error-surface-must-offer-a-clear-retry-action-wired-to-the-underlying-react-query-refetch-or-equivalent-so-users-can-recover-without-refreshing-the-whole-page",
+      "title": "Add a consistent, retryable error UX for the 'service temporarily unavailable' storefront state on Home, Shop, and Category pages: the error surface must offer a clear Retry action wired to the underlying React Query `refetch()` (or equivalent) so users can recover without refreshing the whole page.",
+      "reqIds": [
+        "REQ-48"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-prevent-error-message-regressions-by-ensuring-any-storefront-error-shown-via-asyncstate-uses-sanitized-plain-english-messaging-and-never-leaks-internal-error-details-reject-codes-request-ids-principals-cbor-etc-including-for-the-new-service-temporarily-unavailable-error-scenario-reported-by-the-user",
+      "title": "Prevent error-message regressions by ensuring any storefront error shown via `AsyncState` uses sanitized, plain-English messaging and never leaks internal error details (reject codes, request IDs, principals, CBOR, etc.), including for the new 'service temporarily unavailable' error scenario reported by the user.",
+      "reqIds": [
+        "REQ-49"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-static-product-image-url-generation-so-mapped-product-images-load-correctly-on-all-routes-e-g-shop-category-product-in-both-local-development-and-internet-computer-deployments-without-producing-incorrect-base-paths-like-product-assets-update-the-base-path-detection-logic-in-frontend-src-utils-productimages-ts-so-it-does-not-treat-normal-route-segments-e-g-product-shop-as-an-internet-computer-canister-id-prefix",
+      "title": "Fix static product image URL generation so mapped product images load correctly on all routes (e.g., /shop, /category/..., /product/...) in both local development and Internet Computer deployments, without producing incorrect base paths like \"/product/assets/...\". Update the base-path detection logic in `frontend/src/utils/productImages.ts` so it does not treat normal route segments (e.g., \"product\", \"shop\") as an Internet Computer canister-id prefix.",
+      "reqIds": [
+        "REQ-50"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-keep-all-user-facing-image-error-fallback-messages-in-english-and-ensure-the-image-components-only-display-the-failed-to-load-placeholders-when-the-browser-actually-fails-to-fetch-the-mapped-image-urls-not-due-to-url-construction-bugs",
+      "title": "Keep all user-facing image error/fallback messages in English and ensure the image components only display the \"failed to load\" placeholders when the browser actually fails to fetch the mapped image URLs (not due to URL construction bugs).",
+      "reqIds": [
+        "REQ-51"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-investigate-and-fix-the-root-cause-of-the-persistent-storefront-browsing-failure-that-results-in-the-user-facing-message-the-store-service-is-temporarily-unavailable-please-try-again-in-a-moment-so-that-public-users-can-load-products-on-home-shop-and-category-pages-when-the-backend-canister-is-running",
+      "title": "Investigate and fix the root cause of the persistent storefront browsing failure that results in the user-facing message \"The store service is temporarily unavailable. Please try again in a moment.\" so that public users can load products on Home, Shop, and Category pages when the backend canister is running.",
+      "reqIds": [
+        "REQ-52"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-refine-error-classification-and-messaging-so-that-the-sanitized-message-the-store-service-is-temporarily-unavailable-please-try-again-in-a-moment-is-only-used-for-genuine-backend-unavailable-scenarios-e-g-stopped-canister-replica-rejection-and-does-not-mask-other-errors-e-g-product-not-found-admin-only-authorization-failures-keep-all-user-facing-messaging-in-plain-english",
+      "title": "Refine error classification and messaging so that the sanitized message \"The store service is temporarily unavailable. Please try again in a moment.\" is only used for genuine backend-unavailable scenarios (e.g., stopped-canister / replica rejection) and does not mask other errors (e.g., \"Product not found\", admin-only authorization failures). Keep all user-facing messaging in plain English.",
+      "reqIds": [
+        "REQ-54"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-new-public-login-page-route-that-collects-a-person-s-name-email-address-and-phone-number-and-includes-a-phone-verification-step-using-a-one-time-code-otp-the-page-must-be-reachable-via-a-new-route-e-g-login-and-must-use-clear-plain-english-labels-validation-messages-and-button-text",
+      "title": "Add a new public Login page/route that collects a person's Name, Email Address, and Phone Number, and includes a Phone Verification step using a one-time code (OTP). The page must be reachable via a new route (e.g., /login) and must use clear, plain-English labels, validation messages, and button text.",
+      "reqIds": [
+        "REQ-55"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-frontend-data-hooks-react-query-for-the-phone-verification-flow-and-user-profile-save-flow-calling-new-backend-canister-methods-to-1-request-an-otp-for-a-phone-number-2-verify-an-otp-and-3-save-the-verified-user-profile-name-email-phone-for-the-logged-in-principal",
+      "title": "Implement frontend data hooks (React Query) for the phone verification flow and user profile save flow, calling new backend canister methods to (1) request an OTP for a phone number, (2) verify an OTP, and (3) save the verified user profile (name/email/phone) for the logged-in principal.",
+      "reqIds": [
+        "REQ-56"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-navigation-access-to-the-login-page-from-the-site-header-and-add-the-needed-navigation-label-s-to-the-centralized-content-configuration-so-the-visible-link-text-remains-editable-in-one-place",
+      "title": "Add navigation access to the Login page from the site header, and add the needed navigation label(s) to the centralized content configuration so the visible link text remains editable in one place.",
+      "reqIds": [
+        "REQ-59"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-set-the-default-phone-dial-country-code-to-india-91-in-the-login-phone-verification-flow-by-pre-filling-the-login-page-phone-number-field-with-the-91-prefix-while-still-allowing-the-user-to-edit-the-number-also-update-the-phone-input-placeholder-to-an-india-format-example-e-g-91-98765-43210-so-the-default-and-guidance-are-consistent",
+      "title": "Set the default phone dial/country code to India (+91) in the Login/phone verification flow by pre-filling the Login page phone number field with the \"+91\" prefix (while still allowing the user to edit the number). Also update the phone input placeholder to an India-format example (e.g., \"+91 98765 43210\") so the default and guidance are consistent.",
+      "reqIds": [
+        "REQ-60"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-login-page-flow-to-require-internet-identity-authentication-before-attempting-to-save-a-user-profile-or-start-phone-verification-if-the-visitor-is-not-authenticated-anonymous-identity-show-a-clear-call-to-action-to-sign-in-with-internet-identity-and-disable-the-send-verification-code-action-until-sign-in-completes",
+      "title": "Update the Login page flow to require Internet Identity authentication before attempting to save a user profile or start phone verification. If the visitor is not authenticated (anonymous identity), show a clear call-to-action to sign in with Internet Identity and disable the \"Send Verification Code\" action until sign-in completes.",
+      "reqIds": [
+        "REQ-61"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-harden-frontend-error-handling-for-the-login-profile-save-phone-verification-flow-so-that-authorization-related-backend-traps-e-g-unauthorized-only-users-can-save-profiles-are-converted-into-a-user-friendly-english-message-that-instructs-the-user-to-sign-in-and-try-again-without-displaying-internal-technical-wording",
+      "title": "Harden frontend error handling for the login/profile save + phone verification flow so that authorization-related backend traps (e.g., \"Unauthorized: Only users can save profiles\") are converted into a user-friendly English message that instructs the user to sign in and try again, without displaying internal/technical wording.",
+      "reqIds": [
+        "REQ-62"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -443,6 +551,50 @@
       "summary": "Apply the same stopped-canister error sanitization on the Home page featured products section (HomePage currently passes the raw error into AsyncState) so that the Home page never surfaces the raw IC replica rejection details to end users.",
       "reqIds": [
         "REQ-45"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-33",
+      "summary": "Ensure the storefront error state for \"service temporarily unavailable\" is consistently retryable across Home, Shop, and Category pages: the error UI must show a clear \"Retry\" action that calls the underlying React Query `refetch()` for that page’s product query, and all user-facing error text must be in English.",
+      "reqIds": [
+        "REQ-53"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-34",
+      "summary": "Add a user login/registration page that collects Name, Email, and Phone Number, and verifies the phone number via SMS (OTP code) before allowing access.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-37",
+      "summary": "Extend the backend user profile model to store Name, Email Address, Phone Number, and a boolean indicating whether the phone number has been verified. Update existing profile APIs to use the expanded UserProfile type while maintaining access control (only the caller can save their profile; admins can view others only as currently allowed).",
+      "reqIds": [
+        "REQ-57"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-38",
+      "summary": "Add backend APIs to support phone verification via OTP: (1) requestPhoneVerification(phone: Text) returns a short-lived OTP challenge (without exposing internal details), and (2) verifyPhoneVerificationCode(phone: Text, code: Text) marks the caller's phone as verified when the code matches and is not expired. OTPs must be scoped to the caller and expire after a short time window.",
+      "reqIds": [
+        "REQ-58"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-39",
+      "summary": "Set the default country/phone dial code to India (+91) in the phone number input for the login/phone verification flow.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-42",
+      "summary": "Fix the backend authorization logic for user profile and phone verification APIs so that an authenticated caller who is not yet marked as a \"user\" can complete the login flow successfully. Specifically, ensure first-time authenticated principals can save their own profile and perform phone verification without requiring a pre-existing manual permission grant, while still preventing anonymous callers from using these APIs.",
+      "reqIds": [
+        "REQ-63"
       ],
       "status": "pending"
     }

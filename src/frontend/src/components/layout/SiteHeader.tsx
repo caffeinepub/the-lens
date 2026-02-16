@@ -68,6 +68,13 @@ export default function SiteHeader() {
             >
               {content.nav.about}
             </Link>
+            <Link
+              to="/login"
+              className="text-sm font-medium transition-colors hover:text-accent"
+              activeProps={{ className: 'text-accent' }}
+            >
+              {content.nav.login}
+            </Link>
             {showAdminLink && (
               <Link
                 to="/admin/products"
@@ -146,6 +153,13 @@ export default function SiteHeader() {
               onClick={() => setMobileMenuOpen(false)}
             >
               {content.nav.about}
+            </Link>
+            <Link
+              to="/login"
+              className="block text-sm font-medium transition-colors hover:text-accent"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              {content.nav.login}
             </Link>
             {showAdminLink && (
               <Link

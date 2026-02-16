@@ -106,6 +106,9 @@ export interface Order {
 }
 export interface UserProfile {
     name: string;
+    email: string;
+    phone: string;
+    phoneVerified: boolean;
 }
 export interface Product {
     id: ProductId;
@@ -149,7 +152,10 @@ export interface backendInterface {
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     initializeShop(): Promise<void>;
     isCallerAdmin(): Promise<boolean>;
+    isPhoneVerified(phone: string): Promise<boolean>;
+    requestPhoneVerification(phone: string): Promise<void>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
+    verifyPhoneVerificationCode(phone: string, code: string): Promise<boolean>;
 }
 import type { Category as _Category, Order as _Order, OrderId as _OrderId, OrderItem as _OrderItem, OrderStatus as _OrderStatus, Product as _Product, ProductId as _ProductId, Time as _Time, UserProfile as _UserProfile, UserRole as _UserRole } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
@@ -406,6 +412,34 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async isPhoneVerified(arg0: string): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.isPhoneVerified(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.isPhoneVerified(arg0);
+            return result;
+        }
+    }
+    async requestPhoneVerification(arg0: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.requestPhoneVerification(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.requestPhoneVerification(arg0);
+            return result;
+        }
+    }
     async saveCallerUserProfile(arg0: UserProfile): Promise<void> {
         if (this.processError) {
             try {
@@ -417,6 +451,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.saveCallerUserProfile(arg0);
+            return result;
+        }
+    }
+    async verifyPhoneVerificationCode(arg0: string, arg1: string): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.verifyPhoneVerificationCode(arg0, arg1);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.verifyPhoneVerificationCode(arg0, arg1);
             return result;
         }
     }

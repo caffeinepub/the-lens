@@ -30,17 +30,20 @@ export default function ProductCard({ product }: ProductCardProps) {
   }, [product.id]);
 
   const handleImageError = (index: number) => {
-    const newFailedImages = new Set(failedImages);
-    newFailedImages.add(index);
-    setFailedImages(newFailedImages);
+    setFailedImages(prev => {
+      const newFailedImages = new Set(prev);
+      newFailedImages.add(index);
 
-    // Try next available image
-    if (index === currentImageIndex) {
-      const nextValidIndex = images.findIndex((_, i) => i > index && !newFailedImages.has(i));
-      if (nextValidIndex !== -1) {
-        setCurrentImageIndex(nextValidIndex);
+      // Try next available image if current one failed
+      if (index === currentImageIndex) {
+        const nextValidIndex = images.findIndex((_, i) => i > index && !newFailedImages.has(i));
+        if (nextValidIndex !== -1) {
+          setCurrentImageIndex(nextValidIndex);
+        }
       }
-    }
+
+      return newFailedImages;
+    });
   };
 
   const handleAddToCart = (e: React.MouseEvent) => {

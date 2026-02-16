@@ -46,7 +46,12 @@ export const Order = IDL.Record({
   'timestamp' : Time,
   'items' : IDL.Vec(OrderItem),
 });
-export const UserProfile = IDL.Record({ 'name' : IDL.Text });
+export const UserProfile = IDL.Record({
+  'name' : IDL.Text,
+  'email' : IDL.Text,
+  'phone' : IDL.Text,
+  'phoneVerified' : IDL.Bool,
+});
 
 export const idlService = IDL.Service({
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
@@ -71,7 +76,14 @@ export const idlService = IDL.Service({
     ),
   'initializeShop' : IDL.Func([], [], []),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+  'isPhoneVerified' : IDL.Func([IDL.Text], [IDL.Bool], ['query']),
+  'requestPhoneVerification' : IDL.Func([IDL.Text], [], []),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+  'verifyPhoneVerificationCode' : IDL.Func(
+      [IDL.Text, IDL.Text],
+      [IDL.Bool],
+      [],
+    ),
 });
 
 export const idlInitArgs = [];
@@ -115,7 +127,12 @@ export const idlFactory = ({ IDL }) => {
     'timestamp' : Time,
     'items' : IDL.Vec(OrderItem),
   });
-  const UserProfile = IDL.Record({ 'name' : IDL.Text });
+  const UserProfile = IDL.Record({
+    'name' : IDL.Text,
+    'email' : IDL.Text,
+    'phone' : IDL.Text,
+    'phoneVerified' : IDL.Bool,
+  });
   
   return IDL.Service({
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
@@ -144,7 +161,14 @@ export const idlFactory = ({ IDL }) => {
       ),
     'initializeShop' : IDL.Func([], [], []),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+    'isPhoneVerified' : IDL.Func([IDL.Text], [IDL.Bool], ['query']),
+    'requestPhoneVerification' : IDL.Func([IDL.Text], [], []),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+    'verifyPhoneVerificationCode' : IDL.Func(
+        [IDL.Text, IDL.Text],
+        [IDL.Bool],
+        [],
+      ),
   });
 };
 

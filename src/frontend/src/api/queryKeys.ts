@@ -14,4 +14,10 @@ export const queryKeys = {
     products: ['admin', 'products'] as const,
     isAdmin: ['admin', 'isAdmin'] as const,
   },
+  userProfile: {
+    current: ['userProfile', 'current'] as const,
+  },
+  phoneVerification: {
+    status: (phone: string) => ['phoneVerification', 'status', phone] as const,
+  },
 };

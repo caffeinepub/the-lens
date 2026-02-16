@@ -1,71 +1,16 @@
 {
   "kind": "build_request",
-  "title": "Handle stopped-backend canister (IC0508) with user-friendly storefront error states",
-  "priority": "high",
-  "requirements": [
-    {
-      "id": "REQ-44",
-      "text": "Detect Internet Computer replica rejection errors that indicate the backend canister is stopped (e.g., Reject code 5 / error code IC0508 / message includes \"is stopped\" and/or \"CallContextManager\") and convert them into a short, user-friendly English error message for storefront product browsing queries (at minimum the queries used by Home featured products, Shop page, and Category page).",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-5"
-        ],
-        "quotes": [
-          "Reject text: Canister dy7ez-6yaaa-aaaal-qufya-cai is stopped and therefore does not have a CallContextManager Error code: IC0508 ... Method name: getProductsByCategory"
-        ]
-      },
-      "acceptanceCriteria": [
-        "When `getAllProducts()` or `getProductsByCategory()` fails due to a stopped canister, the UI does not display the raw replica error blob to the user.",
-        "Instead, the UI shows a concise English message such as: \"The store service is temporarily unavailable. Please try again in a moment.\" (exact wording can vary but must be English and non-technical).",
-        "The error state still offers a \"Retry\" action where the page already supports retry (Shop/Category), and the retry triggers a refetch.",
-        "Normal errors (non-IC0508) continue to display a helpful message (or existing behavior) and do not get incorrectly mapped to the stopped-canister message."
-      ]
-    },
-    {
-      "id": "REQ-45",
-      "text": "Apply the same stopped-canister error sanitization on the Home page featured products section (HomePage currently passes the raw error into AsyncState) so that the Home page never surfaces the raw IC replica rejection details to end users.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-5"
-        ],
-        "quotes": [
-          "Method name: getProductsByCategory ... Canister ... is stopped ..."
-        ]
-      },
-      "acceptanceCriteria": [
-        "If the backend canister is stopped, the Home page Featured Products section shows an English \"service temporarily unavailable\" style message (not the raw error).",
-        "The rest of the Home page (hero + categories) still renders normally even when product fetching fails.",
-        "If the viewer is an admin and the shop is empty, the existing admin initialization empty-state behavior remains unchanged (this requirement only changes the error presentation when a fetch error occurs)."
-      ]
-    },
-    {
-      "id": "REQ-46",
-      "text": "Ensure all user-facing error text introduced or modified as part of this fix is written in English (including error titles, descriptions, and retry guidance) and does not include internal codes like request IDs, reject codes, CBOR details, or principals.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-5"
-        ],
-        "quotes": [
-          "Use English for any user-facing text in the build request."
-        ]
-      },
-      "acceptanceCriteria": [
-        "No UI surface in the public browsing flow (Home/Shop/Category) displays raw backend rejection payloads (request IDs, principals, CBOR arg bytes, headers) to the user.",
-        "Any new/updated error messages shown to the user are in English and understandable to non-technical users."
-      ]
-    }
-  ],
+  "title": "Customer Login page (Name, Email, India phone format + OTP verification) — already implemented",
+  "priority": "normal",
+  "requirements": [],
   "constraints": [
-    "Do not edit files under frontend/src/components/ui (shadcn components are read-only).",
-    "Respect the existing single-actor Motoko backend architecture; this fix should not require backend changes to canister lifecycle management."
+    "Do not edit files under frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui (compose them instead).",
+    "Keep all user-facing text in plain English.",
+    "Backend must remain a single Motoko actor (no additional backend services)."
   ],
   "nonGoals": [
-    "Starting/stopping/restarting the canister from within the app or implementing operational tooling to manage canister status.",
-    "Adding new backend APIs solely for health checks.",
-    "Changing Internet Identity behavior or authentication flows."
+    "Adding real SMS delivery or third-party OTP providers (Twilio, WhatsApp, etc.).",
+    "Adding third-party authentication beyond Internet Identity."
   ],
   "imageRequirements": {
     "required": [],

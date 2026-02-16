@@ -1,66 +1,21 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-15T17:46:03.952Z",
+  "generatedAt": "2026-02-16T05:06:31.530Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 3,
-    "implemented": 2,
-    "items": [
-      {
-        "id": "REQ-44",
-        "summary": "Detect Internet Computer replica rejection errors that indicate the backend canister is stopped (e.g., Reject code 5 / error code IC0508 / message includes \"is stopped\" and/or \"CallContextManager\") and convert them into a short, user-friendly English error message for storefront product browsing queries (at minimum the queries used by Home featured products, Shop page, and Category page).",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/utils/storefrontErrorSanitizer.ts",
-          "frontend/src/api/shopHooks.ts",
-          "frontend/src/pages/ShopPage.tsx",
-          "frontend/src/pages/CategoryPage.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/utils/storefrontErrorSanitizer.ts",
-          "frontend/src/api/shopHooks.ts",
-          "frontend/src/pages/ShopPage.tsx",
-          "frontend/src/pages/CategoryPage.tsx"
-        ]
-      },
-      {
-        "id": "REQ-45",
-        "summary": "Apply the same stopped-canister error sanitization on the Home page featured products section (HomePage currently passes the raw error into AsyncState) so that the Home page never surfaces the raw IC replica rejection details to end users.",
-        "status": "missing",
-        "plannedFiles": [
-          "frontend/src/pages/HomePage.tsx"
-        ],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-46",
-        "summary": "Ensure all user-facing error text introduced or modified as part of this fix is written in English (including error titles, descriptions, and retry guidance) and does not include internal codes like request IDs, reject codes, CBOR details, or principals.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/utils/storefrontErrorSanitizer.ts",
-          "frontend/src/components/feedback/AsyncState.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/utils/storefrontErrorSanitizer.ts",
-          "frontend/src/components/feedback/AsyncState.tsx"
-        ]
-      }
-    ]
+    "total": 0,
+    "implemented": 0,
+    "items": []
   },
   "changedFiles": [
+    "backend/main.mo",
     "build-request.json",
     "feature_evidence.json",
-    "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/api/shopHooks.ts",
-    "frontend/src/components/feedback/AsyncState.tsx",
-    "frontend/src/pages/CategoryPage.tsx",
-    "frontend/src/pages/ShopPage.tsx",
-    "frontend/src/utils/storefrontErrorSanitizer.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

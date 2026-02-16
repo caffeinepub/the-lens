@@ -10,6 +10,7 @@ import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
 import AboutContactPage from './pages/AboutContactPage';
 import AdminProductsPage from './pages/AdminProductsPage';
+import LoginPage from './pages/LoginPage';
 
 function Layout() {
   return (
@@ -69,6 +70,12 @@ const aboutRoute = createRoute({
   component: AboutContactPage,
 });
 
+const loginRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/login',
+  component: LoginPage,
+});
+
 const adminProductsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/admin/products',
@@ -83,6 +90,7 @@ const routeTree = rootRoute.addChildren([
   cartRoute,
   checkoutRoute,
   aboutRoute,
+  loginRoute,
   adminProductsRoute,
 ]);
 

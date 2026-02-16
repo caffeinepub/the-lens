@@ -2,16 +2,15 @@ import Runtime "mo:core/Runtime";
 import Map "mo:core/Map";
 import Array "mo:core/Array";
 import Text "mo:core/Text";
+import Time "mo:core/Time";
+import List "mo:core/List";
 import Iter "mo:core/Iter";
 import Principal "mo:core/Principal";
 import Order "mo:core/Order";
-import Time "mo:core/Time";
-
-
 import AccessControl "authorization/access-control";
 import MixinAuthorization "authorization/MixinAuthorization";
 
-// Run migration on upgrade.
+
 
 actor {
   let accessControlState = AccessControl.initState();
@@ -20,6 +19,7 @@ actor {
   // Product Types
   type ProductId = Text;
   type OrderId = Text;
+  // More categories will be added.
   type Category = { #homeDecor; #electronics };
   type OrderStatus = { #pending; #completed; #cancelled };
 
@@ -59,9 +59,12 @@ actor {
     };
   };
 
-  // User Profile Type
+  // Extended User Profile Type
   public type UserProfile = {
     name : Text;
+    email : Text;
+    phone : Text;
+    phoneVerified : Bool;
   };
 
   // Persistent State Maps
@@ -70,7 +73,18 @@ actor {
   let userProfiles = Map.empty<Principal, UserProfile>();
   var nextOrderId = 1;
 
-  // User Profile APIs
+  // Phone Verification Services Types
+
+  type VerificationAttempt = {
+    code : Text;
+    expiresAt : Time.Time;
+    phoneNumber : Text;
+  };
+
+  let verificationAttempts = Map.empty<Principal, VerificationAttempt>();
+  let maxAttempts = 3;
+
+  // User Profile APIs (with phone verification).
   public query ({ caller }) func getCallerUserProfile() : async ?UserProfile {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can access profiles");
@@ -89,13 +103,105 @@ actor {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can save profiles");
     };
-    userProfiles.add(caller, profile);
+
+    switch (userProfiles.get(caller)) {
+      case (?existingProfile) {
+        // If the phone has changed, it must be re-verified.
+        if (existingProfile.phone != profile.phone) {
+          let updatedProfile = { profile with phoneVerified = false };
+          userProfiles.add(caller, updatedProfile);
+        } else {
+          userProfiles.add(caller, profile);
+        };
+      };
+      case (null) { userProfiles.add(caller, profile) };
+    };
   };
 
-  // Shop Character List API
+  public shared ({ caller }) func requestPhoneVerification(phone : Text) : async () {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can request phone verification");
+    };
+
+    // Verify that the phone number matches the caller's profile
+    switch (userProfiles.get(caller)) {
+      case (?profile) {
+        if (profile.phone != phone) {
+          Runtime.trap("Unauthorized: Can only verify the phone number in your profile");
+        };
+      };
+      case (null) {
+        Runtime.trap("Profile not found: Please save your profile first");
+      };
+    };
+
+    let code = "1234"; // For now, always use 1234 as code. TODO: Replace with actual random code.
+    // Code is valid for 5 minutes.
+    let expiresAt = Time.now() + 5 * 60 * 1000000000;
+
+    let attempt : VerificationAttempt = {
+      code;
+      expiresAt;
+      phoneNumber = phone;
+    };
+
+    verificationAttempts.add(caller, attempt);
+  };
+
+  public shared ({ caller }) func verifyPhoneVerificationCode(phone : Text, code : Text) : async Bool {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can verify phone");
+    };
+
+    // Verify that the phone number matches the caller's profile
+    switch (userProfiles.get(caller)) {
+      case (?profile) {
+        if (profile.phone != phone) {
+          Runtime.trap("Unauthorized: Can only verify the phone number in your profile");
+        };
+      };
+      case (null) {
+        Runtime.trap("Profile not found");
+      };
+    };
+
+    switch (verificationAttempts.get(caller)) {
+      case (?attempt) {
+        if (attempt.phoneNumber != phone) { return false };
+        if (attempt.code != code) { return false };
+
+        // Check expiry time
+        if (Time.now() > attempt.expiresAt) { return false };
+
+        switch (userProfiles.get(caller)) {
+          case (?profile) {
+            let updatedProfile = { profile with phoneVerified = true };
+            userProfiles.add(caller, updatedProfile);
+          };
+          case (null) {};
+        };
+        verificationAttempts.remove(caller);
+        true;
+      };
+      case (null) { false };
+    };
+  };
+
+  public query ({ caller }) func isPhoneVerified(phone : Text) : async Bool {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can check phone verification status");
+    };
+
+    switch (userProfiles.get(caller)) {
+      case (?profile) { return profile.phone == phone and profile.phoneVerified };
+      case (null) { false };
+    };
+  };
+
+  // Shop Character List API.
   public shared ({ caller }) func initializeShop() : async () {
     if (not (AccessControl.isAdmin(accessControlState, caller))) {
-      Runtime.trap("Unauthorized: Only admins can initialize shop");
+      Runtime.trap("Unauthorized: Only admins can initialize the shop");
     };
 
     let initialProducts : [Product] = [
@@ -202,7 +308,7 @@ actor {
 
   public shared ({ caller }) func adminSetProductPublishStatus(productId : ProductId, published : Bool) : async () {
     if (not (AccessControl.isAdmin(accessControlState, caller))) {
-      Runtime.trap("Unauthorized: Only admins can update product publish status");
+      Runtime.trap("Unauthorized: Only admins can update the product publish status");
     };
     switch (products.get(productId)) {
       case (?product) {

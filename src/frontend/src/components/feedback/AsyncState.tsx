@@ -2,6 +2,7 @@ import { Loader2, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 import { Button } from '../ui/button';
 import { Skeleton } from '../ui/skeleton';
+import { sanitizeStorefrontError } from '../../utils/storefrontErrorSanitizer';
 
 interface AsyncStateProps {
   isLoading?: boolean;
@@ -59,12 +60,15 @@ export default function AsyncState({
   }
 
   if (isError) {
-    // Sanitize error message display
+    // Apply centralized sanitization first
+    const sanitizedError = sanitizeStorefrontError(error);
+    
+    // Determine display message
     let displayMessage = 'Something went wrong. Please try again.';
     
-    if (error?.message) {
-      if (isUserFriendlyMessage(error.message)) {
-        displayMessage = error.message;
+    if (sanitizedError?.message) {
+      if (isUserFriendlyMessage(sanitizedError.message)) {
+        displayMessage = sanitizedError.message;
       }
     }
     

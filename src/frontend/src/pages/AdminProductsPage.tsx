@@ -166,9 +166,11 @@ export default function AdminProductsPage() {
       handleCloseDialog();
     } catch (error: any) {
       const errorMessage = error?.message || 'An error occurred';
-      if (errorMessage.includes('Unauthorized')) {
+      const lowerMessage = errorMessage.toLowerCase();
+      
+      if (lowerMessage.includes('unauthorized') || lowerMessage.includes('permission')) {
         setFormError('You do not have permission to perform this action.');
-      } else if (errorMessage.includes('already exists')) {
+      } else if (lowerMessage.includes('already exists')) {
         setFormError('A product with this ID already exists.');
       } else {
         setFormError(errorMessage);
@@ -181,7 +183,9 @@ export default function AdminProductsPage() {
       await setPublishStatus.mutateAsync({ productId, published: !currentStatus });
     } catch (error: any) {
       const errorMessage = error?.message || 'An error occurred';
-      if (errorMessage.includes('Unauthorized')) {
+      const lowerMessage = errorMessage.toLowerCase();
+      
+      if (lowerMessage.includes('unauthorized') || lowerMessage.includes('permission')) {
         alert('You do not have permission to perform this action.');
       } else {
         alert(errorMessage);
@@ -191,6 +195,18 @@ export default function AdminProductsPage() {
 
   const getCategoryLabel = (category: Category) => {
     return category === Category.electronics ? 'Electronics' : 'Home Decor';
+  };
+
+  // Determine error message for products loading
+  const getProductsErrorMessage = () => {
+    if (!productsError) return '';
+    const message = productsError.message || '';
+    const lowerMessage = message.toLowerCase();
+    
+    if (lowerMessage.includes('unauthorized') || lowerMessage.includes('permission')) {
+      return 'You do not have permission to view products.';
+    }
+    return 'Failed to load products. Please try again.';
   };
 
   return (
@@ -210,11 +226,7 @@ export default function AdminProductsPage() {
 
       {productsError && (
         <Alert variant="destructive" className="mb-6">
-          <AlertDescription>
-            {productsError instanceof Error && productsError.message.includes('Unauthorized')
-              ? 'You do not have permission to view products.'
-              : 'Failed to load products. Please try again.'}
-          </AlertDescription>
+          <AlertDescription>{getProductsErrorMessage()}</AlertDescription>
         </Alert>
       )}
 
@@ -396,7 +408,7 @@ export default function AdminProductsPage() {
                   onCheckedChange={(checked) => setFormData({ ...formData, published: checked })}
                 />
                 <Label htmlFor="published" className="cursor-pointer">
-                  Publish product (visible on storefront)
+                  Publish product (visible to customers)
                 </Label>
               </div>
             </div>
@@ -409,14 +421,10 @@ export default function AdminProductsPage() {
                 type="submit"
                 disabled={createProduct.isPending || updateProduct.isPending}
               >
-                {createProduct.isPending || updateProduct.isPending ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {editingProduct ? 'Updating...' : 'Creating...'}
-                  </>
-                ) : (
-                  <>{editingProduct ? 'Update Product' : 'Create Product'}</>
+                {(createProduct.isPending || updateProduct.isPending) && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
+                {editingProduct ? 'Update Product' : 'Create Product'}
               </Button>
             </DialogFooter>
           </form>

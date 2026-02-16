@@ -254,9 +254,7 @@ export default function CheckoutPage() {
 
           {/* Order Summary */}
           <div>
-            <div className="sticky top-20">
-              <OrderSummary items={cart.items} subtotal={subtotal} />
-            </div>
+            <OrderSummary items={cart.items} subtotal={subtotal} />
           </div>
         </div>
       </div>

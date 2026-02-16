@@ -46,17 +46,20 @@ export default function ProductImageGallery({ productId, productName }: ProductI
 
   // Handle image load error
   const handleImageError = (index: number) => {
-    const newFailedImages = new Set(failedImages);
-    newFailedImages.add(index);
-    setFailedImages(newFailedImages);
+    setFailedImages(prev => {
+      const newFailedImages = new Set(prev);
+      newFailedImages.add(index);
 
-    // If current image failed, try to select next available image
-    if (index === selectedIndex) {
-      const nextValidIndex = images.findIndex((_, i) => !newFailedImages.has(i));
-      if (nextValidIndex !== -1 && nextValidIndex !== selectedIndex) {
-        setSelectedIndex(nextValidIndex);
+      // If current image failed, try to select next available image
+      if (index === selectedIndex) {
+        const nextValidIndex = images.findIndex((_, i) => !newFailedImages.has(i));
+        if (nextValidIndex !== -1 && nextValidIndex !== selectedIndex) {
+          setSelectedIndex(nextValidIndex);
+        }
       }
-    }
+
+      return newFailedImages;
+    });
   };
 
   // Check if current selected image has failed

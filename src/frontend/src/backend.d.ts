@@ -24,6 +24,9 @@ export interface Order {
 }
 export interface UserProfile {
     name: string;
+    email: string;
+    phone: string;
+    phoneVerified: boolean;
 }
 export interface Product {
     id: ProductId;
@@ -66,5 +69,8 @@ export interface backendInterface {
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     initializeShop(): Promise<void>;
     isCallerAdmin(): Promise<boolean>;
+    isPhoneVerified(phone: string): Promise<boolean>;
+    requestPhoneVerification(phone: string): Promise<void>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
+    verifyPhoneVerificationCode(phone: string, code: string): Promise<boolean>;
 }
