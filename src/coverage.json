@@ -1,21 +1,67 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-16T05:06:31.530Z",
+  "generatedAt": "2026-02-16T13:00:13.412Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 0,
-    "implemented": 0,
-    "items": []
+    "total": 3,
+    "implemented": 2,
+    "items": [
+      {
+        "id": "REQ-80",
+        "summary": "Fix static asset URL generation so product images (including filenames with spaces like \"cmf front.jpeg\") reliably load in the browser on all routes (Home, Shop, Category, Product Detail) in both local development and Internet Computer deployments, without requiring absolute-root paths.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/utils/publicAssetUrl.ts",
+          "frontend/src/utils/productImages.ts",
+          "frontend/src/components/products/ProductCard.tsx",
+          "frontend/src/components/products/ProductImageGallery.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/utils/publicAssetUrl.ts",
+          "frontend/src/utils/productImages.ts"
+        ]
+      },
+      {
+        "id": "REQ-81",
+        "summary": "Update the Home page and category tiles to reference generated static images using the same production-safe base-path approach (instead of hardcoded absolute paths like \"/assets/generated/...\"), so these images also load correctly under Internet Computer base paths.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/HomePage.tsx",
+          "frontend/src/utils/publicAssetUrl.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/HomePage.tsx",
+          "frontend/src/utils/publicAssetUrl.ts"
+        ]
+      },
+      {
+        "id": "REQ-82",
+        "summary": "Verify the CMF earbuds static image assets are present in the frontend public assets folder exactly as referenced by the mapping, and ensure they are included in the deployed frontend build output so the browser can fetch them successfully.",
+        "status": "missing",
+        "plannedFiles": [
+          "frontend/public/assets/products/cmf-cc-earbuds/cmf front.jpeg",
+          "frontend/public/assets/products/cmf-cc-earbuds/cmf 1-2.webp",
+          "frontend/public/assets/products/cmf-cc-earbuds/cmf 2-1.webp",
+          "frontend/public/assets/products/cmf-cc-earbuds/cmf 7-1.webp",
+          "frontend/public/assets/products/cmf-cc-earbuds/cmf 1-1.webp",
+          "frontend/public/assets/products/cmf-cc-earbuds/cmf 6-1.webp"
+        ],
+        "matchedFiles": []
+      }
+    ]
   },
   "changedFiles": [
-    "backend/main.mo",
     "build-request.json",
     "feature_evidence.json",
+    "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
+    "frontend/src/pages/HomePage.tsx",
+    "frontend/src/utils/productImages.ts",
+    "frontend/src/utils/publicAssetUrl.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

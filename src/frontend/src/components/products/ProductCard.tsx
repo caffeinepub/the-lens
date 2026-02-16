@@ -67,7 +67,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                   {product.name}
                 </p>
                 {allImagesFailed && (
-                  <p className="text-xs text-muted-foreground mt-1">Image unavailable</p>
+                  <p className="text-xs text-muted-foreground mt-1">Failed to load image</p>
                 )}
               </div>
             </div>

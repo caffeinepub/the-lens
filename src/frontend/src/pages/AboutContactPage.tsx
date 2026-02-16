@@ -20,7 +20,7 @@ export default function AboutContactPage() {
               ))}
             </div>
             
-            {/* Built with caffeine.ai and Owner Credit */}
+            {/* Built with caffeine.ai and CEO Credit */}
             <div className="mt-8 pt-6 border-t border-border">
               <p className="text-sm text-muted-foreground mb-2">
                 Built with <Heart className="inline h-4 w-4 text-accent" /> using{' '}
@@ -34,7 +34,7 @@ export default function AboutContactPage() {
                 </a>
               </p>
               <p className="text-sm font-semibold text-foreground">
-                OWNER NAME - VAIBHAV SHARMA
+                {content.about.ceoCreditLine}
               </p>
             </div>
           </section>

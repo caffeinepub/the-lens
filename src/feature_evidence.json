@@ -1,4 +1,45 @@
 {
   "kind": "feature_evidence_report",
-  "features": []
+  "features": [
+    {
+      "featureId": "feature-fix-static-asset-url-generation-so-product-images-including-filenames-with-spaces-like-cmf-front-jpeg-reliably-load-in-the-browser-on-all-routes-home-shop-category-product-detail-in-both-local-development-and-internet-computer-deployments-without-requiring-absolute-root-paths",
+      "featureTitle": "Fix static asset URL generation so product images (including filenames with spaces like \"cmf front.jpeg\") reliably load in the browser on all routes (Home, Shop, Category, Product Detail) in both local development and Internet Computer deployments, without requiring absolute-root paths.",
+      "files": [
+        "frontend/src/utils/productImages.ts",
+        "frontend/src/utils/publicAssetUrl.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-80"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-update-the-home-page-and-category-tiles-to-reference-generated-static-images-using-the-same-production-safe-base-path-approach-instead-of-hardcoded-absolute-paths-like-assets-generated-so-these-images-also-load-correctly-under-internet-computer-base-paths",
+      "featureTitle": "Update the Home page and category tiles to reference generated static images using the same production-safe base-path approach (instead of hardcoded absolute paths like \"/assets/generated/...\"), so these images also load correctly under Internet Computer base paths.",
+      "files": [
+        "frontend/src/pages/HomePage.tsx",
+        "frontend/src/utils/publicAssetUrl.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-81"
+      ],
+      "confidence": "high"
+    }
+  ]
 }

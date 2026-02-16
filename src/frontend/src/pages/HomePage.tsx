@@ -9,6 +9,7 @@ import { useIsCallerAdmin } from '../api/authHooks';
 import ProductGrid from '../components/products/ProductGrid';
 import AsyncState from '../components/feedback/AsyncState';
 import { getContent } from '../content/siteContent';
+import { getGeneratedImageUrl } from '../utils/publicAssetUrl';
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -49,7 +50,7 @@ export default function HomePage() {
       return (
         <div className="text-center py-12 space-y-4">
           <p className="text-muted-foreground mb-4">
-            No products available. Initialize the shop to add sample products.
+            {content.home.featured.emptyMessageAdmin}
           </p>
           <Button
             onClick={() => initShop.mutate()}
@@ -62,7 +63,7 @@ export default function HomePage() {
                 Initializing Shop...
               </>
             ) : (
-              'Initialize Shop'
+              content.home.featured.initializeButton
             )}
           </Button>
           {initShop.isError && (
@@ -80,7 +81,7 @@ export default function HomePage() {
     return (
       <div className="text-center py-12">
         <p className="text-muted-foreground">
-          No products available at the moment. Please check back soon!
+          {content.home.featured.emptyMessage}
         </p>
       </div>
     );
@@ -116,7 +117,7 @@ export default function HomePage() {
             </div>
             <div className="relative">
               <img
-                src="/assets/generated/the-lens-hero.dim_1600x600.png"
+                src={getGeneratedImageUrl('the-lens-hero.dim_1600x600.png')}
                 alt={content.home.hero.imageAlt}
                 className="rounded-lg shadow-medium w-full"
               />
@@ -137,7 +138,7 @@ export default function HomePage() {
               <Card className="group overflow-hidden transition-all hover:shadow-medium cursor-pointer">
                 <div className="aspect-video overflow-hidden">
                   <img
-                    src="/assets/generated/the-lens-category-electronics.dim_800x800.png"
+                    src={getGeneratedImageUrl('the-lens-category-electronics.dim_800x800.png')}
                     alt={content.home.categories.electronics.imageAlt}
                     className="w-full h-full object-cover transition-transform group-hover:scale-105"
                   />
@@ -161,7 +162,7 @@ export default function HomePage() {
               <Card className="group overflow-hidden transition-all hover:shadow-medium cursor-pointer">
                 <div className="aspect-video overflow-hidden">
                   <img
-                    src="/assets/generated/the-lens-category-home-decor.dim_800x800.png"
+                    src={getGeneratedImageUrl('the-lens-category-home-decor.dim_800x800.png')}
                     alt={content.home.categories.homeDecor.imageAlt}
                     className="w-full h-full object-cover transition-transform group-hover:scale-105"
                   />
@@ -196,19 +197,17 @@ export default function HomePage() {
             isLoading={isLoading}
             isError={isError}
             error={error}
-            isEmpty={featuredProducts.length === 0}
+            isEmpty={!featuredProducts || featuredProducts.length === 0}
+            onRetry={refetch}
             emptyContent={renderEmptyState()}
-            onRetry={() => refetch()}
           >
             <ProductGrid products={featuredProducts} />
-            {featuredProducts.length > 0 && (
-              <div className="text-center mt-12">
-                <Button size="lg" variant="outline" onClick={() => navigate({ to: '/shop' })}>
-                  {content.home.featured.viewAllCta}
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </div>
-            )}
+            <div className="text-center mt-8">
+              <Button size="lg" variant="outline" onClick={() => navigate({ to: '/shop' })}>
+                {content.home.featured.viewAllCta}
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </div>
           </AsyncState>
         </div>
       </section>

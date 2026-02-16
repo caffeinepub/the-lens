@@ -1,15 +1,15 @@
 import Runtime "mo:core/Runtime";
+import Time "mo:core/Time";
 import Map "mo:core/Map";
 import Array "mo:core/Array";
 import Text "mo:core/Text";
-import Time "mo:core/Time";
 import List "mo:core/List";
-import Iter "mo:core/Iter";
 import Principal "mo:core/Principal";
 import Order "mo:core/Order";
+import Iter "mo:core/Iter";
+
 import AccessControl "authorization/access-control";
 import MixinAuthorization "authorization/MixinAuthorization";
-
 
 
 actor {
@@ -84,7 +84,12 @@ actor {
   let verificationAttempts = Map.empty<Principal, VerificationAttempt>();
   let maxAttempts = 3;
 
+  // Rate limiting - Time between 2 OTP requests (10s = 10_000_000_000ns) and last request timestamp.
+  let minOtpRequestInterval = 10_000_000_000;
+  let lastOtpRequestTimestamps = Map.empty<Principal, Time.Time>();
+
   // User Profile APIs (with phone verification).
+
   public query ({ caller }) func getCallerUserProfile() : async ?UserProfile {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can access profiles");
@@ -123,21 +128,33 @@ actor {
       Runtime.trap("Unauthorized: Only users can request phone verification");
     };
 
-    // Verify that the phone number matches the caller's profile
     switch (userProfiles.get(caller)) {
       case (?profile) {
         if (profile.phone != phone) {
-          Runtime.trap("Unauthorized: Can only verify the phone number in your profile");
+          Runtime.trap("Phone number does not match your profile");
         };
       };
       case (null) {
-        Runtime.trap("Profile not found: Please save your profile first");
+        Runtime.trap("Profile not found. Please create a profile first");
       };
     };
 
-    let code = "1234"; // For now, always use 1234 as code. TODO: Replace with actual random code.
-    // Code is valid for 5 minutes.
-    let expiresAt = Time.now() + 5 * 60 * 1000000000;
+    // Anti-abuse control: enforce minimum time between OTP requests
+    let now = Time.now();
+    switch (lastOtpRequestTimestamps.get(caller)) {
+      case (?lastRequest) {
+        if (now - lastRequest < minOtpRequestInterval) {
+          Runtime.trap("Please wait at least 10 seconds before requesting another verification code");
+        };
+      };
+      case (null) {};
+    };
+
+    // Update last request timestamp
+    lastOtpRequestTimestamps.add(caller, now);
+
+    let code = "1234"; // For now, always use 1234 as code (TODO: Replace with real random code).
+    let expiresAt = Time.now() + 5 * 60 * 1000000000; // 5 minutes
 
     let attempt : VerificationAttempt = {
       code;

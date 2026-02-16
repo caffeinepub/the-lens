@@ -14,6 +14,7 @@ import { UserProfile } from '../backend';
 
 const PHONE_DRAFT_KEY = 'login_phone_draft';
 const DEFAULT_PHONE_PREFIX = '+91 ';
+const RESEND_COOLDOWN_SECONDS = 30;
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -29,6 +30,8 @@ export default function LoginPage() {
   const [otpCode, setOtpCode] = useState('');
   const [step, setStep] = useState<'form' | 'otp' | 'success'>('form');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [resendCooldown, setResendCooldown] = useState(0);
+  const [resendSuccess, setResendSuccess] = useState(false);
 
   const requestOtp = useRequestPhoneVerification();
   const verifyOtp = useVerifyPhoneVerificationCode();
@@ -60,6 +63,26 @@ export default function LoginPage() {
       });
     }
   }, [isAuthenticated]);
+
+  // Cooldown timer effect
+  useEffect(() => {
+    if (resendCooldown > 0) {
+      const timer = setTimeout(() => {
+        setResendCooldown(resendCooldown - 1);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [resendCooldown]);
+
+  // Clear resend success message after 3 seconds
+  useEffect(() => {
+    if (resendSuccess) {
+      const timer = setTimeout(() => {
+        setResendSuccess(false);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [resendSuccess]);
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
@@ -115,8 +138,30 @@ export default function LoginPage() {
       await requestOtp.mutateAsync(formData.phone);
       setStep('otp');
       setErrors({});
+      setResendCooldown(RESEND_COOLDOWN_SECONDS);
     } catch (error: any) {
       setErrors({ submit: error.message || 'Failed to send verification code' });
+    }
+  };
+
+  const handleResendCode = async () => {
+    if (!isAuthenticated) {
+      setErrors({ resend: 'Please sign in with Internet Identity first.' });
+      return;
+    }
+
+    try {
+      // Only request OTP, don't re-save profile
+      await requestOtp.mutateAsync(formData.phone);
+      setResendCooldown(RESEND_COOLDOWN_SECONDS);
+      setResendSuccess(true);
+      setErrors(prev => {
+        const { resend, ...rest } = prev;
+        return rest;
+      });
+    } catch (error: any) {
+      setErrors({ resend: error.message || 'Failed to resend verification code' });
+      setResendSuccess(false);
     }
   };
 
@@ -157,6 +202,8 @@ export default function LoginPage() {
     // Persist user edits to session storage
     sessionStorage.setItem(PHONE_DRAFT_KEY, value);
   };
+
+  const canResend = resendCooldown === 0 && !requestOtp.isPending;
 
   return (
     <div className="container-custom py-12">
@@ -303,6 +350,22 @@ export default function LoginPage() {
                   )}
                 </div>
 
+                {resendSuccess && (
+                  <Alert className="bg-green-50 border-green-200 dark:bg-green-950 dark:border-green-800">
+                    <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
+                    <AlertDescription className="text-green-800 dark:text-green-200">
+                      A new code has been sent to your phone.
+                    </AlertDescription>
+                  </Alert>
+                )}
+
+                {errors.resend && (
+                  <Alert variant="destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>{errors.resend}</AlertDescription>
+                  </Alert>
+                )}
+
                 <div className="space-y-2">
                   <Button
                     onClick={handleVerifyCode}
@@ -315,17 +378,24 @@ export default function LoginPage() {
                     Verify Code
                   </Button>
 
-                  <Button
-                    variant="outline"
-                    onClick={handleSendCode}
-                    disabled={requestOtp.isPending}
-                    className="w-full"
-                  >
-                    {requestOtp.isPending && (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <div className="space-y-1">
+                    <Button
+                      variant="outline"
+                      onClick={handleResendCode}
+                      disabled={!canResend}
+                      className="w-full"
+                    >
+                      {requestOtp.isPending && (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      )}
+                      Resend Code
+                    </Button>
+                    {resendCooldown > 0 && (
+                      <p className="text-xs text-muted-foreground text-center">
+                        You can resend a code in {resendCooldown}s
+                      </p>
                     )}
-                    Resend Code
-                  </Button>
+                  </div>
                 </div>
               </div>
             )}
@@ -346,12 +416,6 @@ export default function LoginPage() {
             )}
           </CardContent>
         </Card>
-
-        {step === 'form' && isAuthenticated && (
-          <p className="text-center text-sm text-muted-foreground mt-4">
-            Note: For demo purposes, use code <strong>1234</strong> for verification
-          </p>
-        )}
       </div>
     </div>
   );

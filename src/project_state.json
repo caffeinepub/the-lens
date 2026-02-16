@@ -1,13 +1,14 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 49,
+  "projectStateVersion": 67,
   "summary": "Build a company website for 'The Lens' to sell trending/viral products, including electronics and home decor.",
   "architectural_notes": [
     "Custom domain setup on Internet Computer requires DNS records (CNAME/TXT + ACME challenge) and adding a .well-known/ic-domains file to the frontend build, followed by redeploy for SSL.",
-    "Phone verification will require integrating an SMS/OTP provider (e.g., Twilio) and adding an OTP send/verify flow + secure session/auth handling (frontend UI + backend endpoints/canister methods)."
+    "Phone verification will require integrating an SMS/OTP provider (e.g., Twilio) and adding an OTP send/verify flow + secure session/auth handling (frontend UI + backend endpoints/canister methods).",
+    "Phone verification must use a real SMS/OTP delivery provider (replace any demo/mock verification code), with production-safe OTP send + verify handling.",
+    "Resend-OTP should include basic anti-abuse controls (e.g., per-phone/per-principal cooldown + rate limiting) and clear UI states (disabled while pending, retry after cooldown)."
   ],
   "known_issues": [
-    "Storefront only shows products with published=true; CMF earbuds product exists but was not visible because it was unpublished.",
     "Product images are not visible on the product page (user reports they cannot see the product images after deployment).",
     "After deploying Version 11, storefront shows an error and the user cannot view the listed product(s) (regression/blocker).",
     "After deploying Version 13, the user still cannot see the product images (image rendering issue persists).",
@@ -16,7 +17,8 @@
     "Storefront error: IC replica rejection (Reject code 5, IC0508) because backend canister dy7ez-6yaaa-aaaal-qufya-cai is stopped; query getProductsByCategory fails.",
     "After deploying Version 17, storefront still errors; user sees message: \"The store service is temporarily unavailable. Please try again in a moment.\" (different from prior error).",
     "After deploying Version 18, storefront shows \"failed to load images\" (product image load failure persists / new explicit error message observed).",
-    "After deploying Version 19, storefront shows error message: \"The store service is temporarily unavailable. Please try again in a moment.\" (issue persists)."
+    "After deploying Version 19, storefront shows error message: \"The store service is temporarily unavailable. Please try again in a moment.\" (issue persists).",
+    "After deploying Version 32, the user reports the product image is still not visible on the storefront (image rendering issue persists)."
   ],
   "isFixRequest": true,
   "existing_features": [
@@ -387,6 +389,94 @@
         "REQ-62"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-remove-all-demo-placeholder-phone-verification-behavior-from-the-login-flow-ui-so-the-app-no-longer-instructs-users-to-use-a-fixed-verification-code-e-g-remove-the-note-for-demo-purposes-use-code-1234-text-from-frontend-src-pages-loginpage-tsx",
+      "title": "Remove all demo/placeholder phone verification behavior from the Login flow UI so the app no longer instructs users to use a fixed verification code (e.g., remove the \"Note: For demo purposes, use code 1234\" text from `frontend/src/pages/LoginPage.tsx`).",
+      "reqIds": [
+        "REQ-64"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-actual-otp-delivery-behavior-for-phone-verification-so-that-requesting-verification-results-in-an-otp-being-sent-to-the-provided-phone-number-not-displayed-in-the-ui-and-not-hardcoded-if-delivery-cannot-be-performed-due-to-missing-configuration-show-a-clear-plain-english-error-to-the-user-when-they-try-to-send-the-code-do-not-proceed-to-the-otp-step",
+      "title": "Implement actual OTP delivery behavior for phone verification so that requesting verification results in an OTP being sent to the provided phone number (not displayed in the UI and not hardcoded). If delivery cannot be performed due to missing configuration, show a clear, plain-English error to the user when they try to send the code (do not proceed to the OTP step).",
+      "reqIds": [
+        "REQ-66"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-login-page-otp-step-to-provide-a-robust-resend-code-experience-keep-the-existing-resend-button-but-add-a-visible-cooldown-timer-disable-the-button-during-cooldown-and-while-the-resend-request-is-in-flight-and-show-clear-english-success-error-feedback-when-a-new-otp-is-requested",
+      "title": "Update the Login page OTP step to provide a robust \"Resend code\" experience: keep the existing Resend button, but add a visible cooldown timer, disable the button during cooldown and while the resend request is in-flight, and show clear English success/error feedback when a new OTP is requested.",
+      "reqIds": [
+        "REQ-67"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-ceo-credit-line-at-the-end-of-the-about-section-on-the-about-contact-page-so-that-it-displays-the-exact-text-ceo-vaibhav-sharma",
+      "title": "Add a CEO credit line at the end of the About section on the About/Contact page so that it displays the exact text \"CEO - Vaibhav Sharma.\"",
+      "reqIds": [
+        "REQ-69"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-make-the-ceo-credit-line-editable-via-the-centralized-site-content-configuration-by-adding-a-dedicated-field-in-frontend-src-content-sitecontent-ts-and-rendering-it-in-frontend-src-pages-aboutcontactpage-tsx-from-that-content-config-do-not-hardcode-the-ceo-text-directly-in-the-page",
+      "title": "Make the CEO credit line editable via the centralized site content configuration by adding a dedicated field in `frontend/src/content/siteContent.ts` and rendering it in `frontend/src/pages/AboutContactPage.tsx` from that content config (do not hardcode the CEO text directly in the page).",
+      "reqIds": [
+        "REQ-70"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-frontend-src-utils-productimages-ts-so-the-product-image-mapping-for-productid-cmf-earbuds-includes-cmf-front-jpeg-in-the-images-array-preferably-as-the-first-image-so-it-becomes-the-primary-image-while-keeping-the-existing-mapped-images-intact",
+      "title": "Update `frontend/src/utils/productImages.ts` so the product image mapping for `productId: 'cmf-earbuds'` includes `cmf front.jpeg` in the `images` array (preferably as the first image so it becomes the primary image), while keeping the existing mapped images intact.",
+      "reqIds": [
+        "REQ-72"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-the-cmf-earbuds-product-image-so-the-uploaded-image-is-shown-on-the-storefront-ensure-the-static-asset-cmf-front-jpeg-exists-in-frontend-public-assets-products-cmf-cc-earbuds-and-that-the-frontend-uses-it-as-the-primary-image-for-product-id-cmf-earbuds-on-both-the-product-detail-gallery-and-product-cards-home-featured-shop-category",
+      "title": "Fix the CMF earbuds product image so the uploaded image is shown on the storefront: ensure the static asset `cmf front.jpeg` exists in `frontend/public/assets/products/cmf-cc-earbuds/` and that the frontend uses it as the primary image for product id `cmf-earbuds` on both the Product Detail gallery and product cards (Home featured, Shop, Category).",
+      "reqIds": [
+        "REQ-74"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-static-product-image-url-generation-so-the-cmf-earbuds-images-load-reliably-in-production-internet-computer-deployments-and-on-all-routes-home-shop-category-product-detail-eliminating-the-current-user-visible-failed-to-load-image-placeholders-when-the-images-actually-exist",
+      "title": "Fix static product image URL generation so the CMF earbuds images load reliably in production/Internet Computer deployments and on all routes (Home, Shop, Category, Product Detail), eliminating the current user-visible 'failed to load image' placeholders when the images actually exist.",
+      "reqIds": [
+        "REQ-77"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-verify-the-cmf-earbuds-static-asset-files-are-present-in-the-frontend-public-build-exactly-as-referenced-by-the-image-mapping-and-correct-any-missing-mismatched-files-so-the-mapped-images-can-be-fetched-by-the-browser",
+      "title": "Verify the CMF earbuds static asset files are present in the frontend public build exactly as referenced by the image mapping, and correct any missing/mismatched files so the mapped images can be fetched by the browser.",
+      "reqIds": [
+        "REQ-78"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-static-asset-url-generation-so-product-images-including-filenames-with-spaces-like-cmf-front-jpeg-reliably-load-in-the-browser-on-all-routes-home-shop-category-product-detail-in-both-local-development-and-internet-computer-deployments-without-requiring-absolute-root-paths",
+      "title": "Fix static asset URL generation so product images (including filenames with spaces like \"cmf front.jpeg\") reliably load in the browser on all routes (Home, Shop, Category, Product Detail) in both local development and Internet Computer deployments, without requiring absolute-root paths.",
+      "reqIds": [
+        "REQ-80"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-home-page-and-category-tiles-to-reference-generated-static-images-using-the-same-production-safe-base-path-approach-instead-of-hardcoded-absolute-paths-like-assets-generated-so-these-images-also-load-correctly-under-internet-computer-base-paths",
+      "title": "Update the Home page and category tiles to reference generated static images using the same production-safe base-path approach (instead of hardcoded absolute paths like \"/assets/generated/...\"), so these images also load correctly under Internet Computer base paths.",
+      "reqIds": [
+        "REQ-81"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -595,6 +685,100 @@
       "summary": "Fix the backend authorization logic for user profile and phone verification APIs so that an authenticated caller who is not yet marked as a \"user\" can complete the login flow successfully. Specifically, ensure first-time authenticated principals can save their own profile and perform phone verification without requiring a pre-existing manual permission grant, while still preventing anonymous callers from using these APIs.",
       "reqIds": [
         "REQ-63"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-43",
+      "summary": "Replace the demo phone verification logic with real SMS-based OTP delivery to the user's phone number (integrate an SMS/OTP provider and wire send/verify into the Login flow).",
+      "reqIds": [],
+      "status": "in_progress"
+    },
+    {
+      "id": "AR-45",
+      "summary": "Update the backend phone verification implementation in `backend/main.mo` to eliminate hardcoded demo OTP values (currently `let code = \"1234\"`). Generate a new OTP per request, store it in canister state for the caller, enforce expiry, and ensure the OTP is never returned to the frontend as part of any API response.",
+      "reqIds": [
+        "REQ-65"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-46",
+      "summary": "Add a \"Resend OTP\" option to the Login/phone verification flow (UI + backend call) with appropriate UX states (disabled while sending, success/error messaging) and basic anti-abuse controls (cooldown/rate limit).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-48",
+      "summary": "Add basic anti-abuse controls for OTP resends on the backend `requestPhoneVerification(phone)` endpoint by enforcing a minimum time between requests per caller, and return a plain-English error when called too frequently so the frontend can display it.",
+      "reqIds": [
+        "REQ-68"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-49",
+      "summary": "Add a CEO credit line at the end of the About page: display \"CEO - Vaibhav Sharma.\"",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-50",
+      "summary": "Add the user-provided photo as an image for an Electronics product so it appears on that product’s detail page and relevant product cards/galleries.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-51",
+      "summary": "Add the user-uploaded image file `cmf front.jpeg` as a static frontend asset for the Electronics product with id `cmf-earbuds` (\"CMF CC Bluetooth Earbuds With High Bass Sound In Ear TWS Black\"). Store it under `frontend/public/assets/products/cmf-cc-earbuds/` and keep the filename exactly (including the space and `.jpeg` extension).",
+      "reqIds": [
+        "REQ-71"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-52",
+      "summary": "Ensure at least one published product (including product id `cmf-earbuds`) is visible to public users immediately after deployment without requiring an admin to manually run `initializeShop()`. If the product catalog is empty on first install, seed the initial catalog (including `cmf-earbuds`). On upgrades, if `cmf-earbuds` is missing, add it; if it exists but is unpublished, set `published=true` (without deleting or overwriting other products).",
+      "reqIds": [
+        "REQ-73"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-53",
+      "summary": "Add the newly re-uploaded product image(s) (user is uploading again) to the storefront so the product pictures are available and render on the product detail page/gallery and product cards.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-54",
+      "summary": "Restore the CMF earbuds static product images so they are present in the frontend build output and load successfully on the storefront. Ensure the following files exist under `frontend/public/assets/products/cmf-cc-earbuds/` with these exact filenames (including spaces and casing): `cmf front.jpeg`, `cmf 1-2.webp`, `cmf 2-1.webp`, `cmf 7-1.webp`, `cmf 1-1.webp`, `cmf 6-1.webp`. If the user re-uploads any of these images, add them back using the exact uploaded filenames and ensure they are committed as static assets (do not rename files in code as a workaround).",
+      "reqIds": [
+        "REQ-75"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-55",
+      "summary": "Confirm the CMF earbuds product image mapping continues to reference the exact filenames listed in `frontend/src/utils/productImages.ts` for `productId: 'cmf-earbuds'`, and that the generated URLs remain browser-loadable (including correct handling of spaces via URL encoding and correct base path handling on IC deployments). Do not introduce new user-facing error text; keep all user-facing messaging in plain English.",
+      "reqIds": [
+        "REQ-76"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-58",
+      "summary": "Keep all user-facing image error/fallback messaging in plain English and ensure the 'failed to load' placeholders only appear when the browser actually fails to fetch the image URLs (not due to incorrect URL construction).",
+      "reqIds": [
+        "REQ-79"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-61",
+      "summary": "Verify the CMF earbuds static image assets are present in the frontend public assets folder exactly as referenced by the mapping, and ensure they are included in the deployed frontend build output so the browser can fetch them successfully.",
+      "reqIds": [
+        "REQ-82"
       ],
       "status": "pending"
     }

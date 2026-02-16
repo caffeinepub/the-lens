@@ -1,11 +1,11 @@
 # Specification
 
 ## Summary
-**Goal:** Add a customer login page that collects name, email, and an India-format phone number with OTP verification.
+**Goal:** Ensure all storefront product and marketing images reliably load across all routes in both local development and Internet Computer deployments, including filenames with spaces, without relying on absolute-root asset paths.
 
 **Planned changes:**
-- Add/update a Customer Login UI with fields for Name, Email, and Indian phone number formatting/validation.
-- Add an OTP verification step in the login flow (generate/verify OTP without real SMS delivery).
-- Wire the login flow to the existing Internet Identity-based authentication setup without adding new backend services.
+- Update frontend static asset URL generation to be base-path safe across routes (Home, Shop, Category, Product Detail) and to properly handle filenames with spaces.
+- Update Home hero and category tile image references to use the same base-path-safe asset URL approach (replacing hardcoded absolute `/assets/...` paths).
+- Verify CMF earbuds image files exist with exact filenames under `frontend/public/assets/products/cmf-cc-earbuds/` and are included/served in the deployed frontend build output at the URLs produced by the app.
 
-**User-visible outcome:** Users can enter their name, email, and an India-format phone number, then complete an OTP verification step to log in.
+**User-visible outcome:** Product images (including CMF earbuds primary image and thumbnails) and Home/category marketing images display correctly on all pages in both local and Internet Computer deployments, without broken images or placeholders when assets exist.

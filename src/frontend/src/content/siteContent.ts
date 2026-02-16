@@ -50,6 +50,7 @@
  * ABOUT PAGE:
  * - about.heading: "About" page main heading
  * - about.paragraphs: Array of about section paragraphs
+ * - about.ceoCreditLine: CEO credit line displayed at the end of the About section
  * 
  * CONTACT PAGE:
  * - contact.heading: "Contact" section heading
@@ -119,6 +120,7 @@ export interface SiteContent {
   about: {
     heading: string;
     paragraphs: string[];
+    ceoCreditLine: string;
   };
   contact: {
     heading: string;
@@ -200,6 +202,7 @@ const siteContent: SiteContent = {
       "Our mission is simple: to help you stay ahead of the curve by offering carefully selected products that enhance your lifestyle. From cutting-edge gadgets to stunning home accessories, we're passionate about finding items that make a difference in your daily life.",
       "At The Lens, we believe shopping should be an experience. That's why we focus on quality, authenticity, and customer satisfaction in everything we do.",
     ],
+    ceoCreditLine: 'CEO - Vaibhav Sharma',
   },
   contact: {
     heading: 'Get in Touch',

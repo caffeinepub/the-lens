@@ -1,35 +1,53 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-16T05:06:31.527Z",
-  "summary": "BuildRequest defines no explicit requirements or acceptance criteria. The diff modifies the backend to add user profile storage and phone/OTP verification logic, plus updates project_state.json content; these changes are not requested by the BuildRequest summary.",
-  "missing_requirements": [],
-  "hallucinated_features": [
+  "generatedAt": "2026-02-16T13:00:13.405Z",
+  "summary": "Diff adds a new production-safe public asset URL utility and updates the CMF earbuds product image mapping to generate encoded, base-path-safe URLs. HomePage is partially updated to use the generated-image URL helper. However, the diff does not show the updated URL generation being applied across all required routes/components, nor does it show the required CMF static image files being added/verified under frontend/public.",
+  "missing_requirements": [
     {
-      "description": "Backend user profile APIs and persistent userProfiles map (name/email/phone/phoneVerified), including authorization checks.",
-      "reason": "The BuildRequest lists no requirements and specifically states the customer login page is already implemented; no backend profile/authorization work was requested.",
+      "id": "REQ-80",
+      "requirement": "Fix static asset URL generation so product images (including filenames with spaces) reliably load on all routes (Home, Shop, Category, Product Detail) in both local development and IC deployments, without requiring absolute-root paths.",
+      "reason": "While a new URL generator exists and productImages mapping now uses it, the diff summary does not show updates in the actual consuming UI components/pages (Product Detail gallery, Shop/Category lists, Home featured cards) to use these generated URLs instead of any prior route-relative or absolute paths.",
       "evidence": [
-        "backend/main.mo"
+        "frontend/src/utils/publicAssetUrl.ts",
+        "frontend/src/utils/productImages.ts",
+        "frontend/src/pages/HomePage.tsx"
       ]
     },
     {
-      "description": "Backend phone verification/OTP attempt tracking (requestPhoneVerification, verificationAttempts, hardcoded code \"1234\", maxAttempts, expiry logic implied by types).",
-      "reason": "No OTP/phone verification backend changes were requested; also non-goals mention no real SMS delivery, but even a stub OTP service was not asked for in this BuildRequest.",
+      "id": "REQ-81",
+      "requirement": "Update the Home page and category tiles to reference generated static images using the same production-safe base-path approach (instead of hardcoded absolute paths like \"/assets/generated/...\").",
+      "reason": "HomePage now imports getGeneratedImageUrl, but the provided truncation does not include the hero image and category tile image src changes, and there is no diff shown for any dedicated category tiles component. Based only on the shown diff, it’s not verifiable that hero + category tiles were updated away from hardcoded absolute paths.",
       "evidence": [
-        "backend/main.mo"
+        "frontend/src/pages/HomePage.tsx",
+        "frontend/src/utils/publicAssetUrl.ts"
       ]
     },
     {
-      "description": "Project metadata/state update describing broader storefront features and REQ-1/REQ-2/etc references.",
-      "reason": "BuildRequest contains no requirements and does not ask to modify project tracking/state files.",
+      "id": "REQ-82",
+      "requirement": "Verify CMF earbuds static image assets are present under frontend/public/assets/products/cmf-cc-earbuds/ with exact filenames (including spaces/casing), and ensure they are included in deployed build output.",
+      "reason": "No files under frontend/public/assets/products/cmf-cc-earbuds/ are shown as added/modified in the diff summary, so the required assets’ presence/correct naming and inclusion in build output cannot be confirmed from the changes.",
       "evidence": [
-        "project_state.json"
+        "<file-diff>: Added: 1, Modified: 4 (no frontend/public assets listed)",
+        "frontend/src/utils/productImages.ts"
       ]
     }
   ],
-  "confidence": 0.74,
+  "hallucinated_features": [
+    {
+      "description": "Homepage featured product selection now explicitly prioritizes the product with id \"cmf-earbuds\" to appear first if present.",
+      "reason": "The BuildRequest focuses on fixing image URL generation/loading across routes; it does not request changes to featured product ranking/selection logic.",
+      "evidence": [
+        "frontend/src/pages/HomePage.tsx"
+      ]
+    }
+  ],
+  "confidence": 0.72,
   "changed_files": [
-    "backend/main.mo",
+    "frontend-file-summaries.txt",
+    "frontend/src/pages/HomePage.tsx",
+    "frontend/src/utils/productImages.ts",
+    "frontend/src/utils/publicAssetUrl.ts",
     "project_state.json"
   ]
 }

@@ -1,16 +1,71 @@
 {
   "kind": "build_request",
-  "title": "Customer Login page (Name, Email, India phone format + OTP verification) — already implemented",
-  "priority": "normal",
-  "requirements": [],
+  "title": "Fix storefront product image visibility across IC deployments and routes",
+  "priority": "high",
+  "requirements": [
+    {
+      "id": "REQ-80",
+      "text": "Fix static asset URL generation so product images (including filenames with spaces like \"cmf front.jpeg\") reliably load in the browser on all routes (Home, Shop, Category, Product Detail) in both local development and Internet Computer deployments, without requiring absolute-root paths.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "no the image is not visible"
+        ]
+      },
+      "acceptanceCriteria": [
+        "For product id \"cmf-earbuds\", the primary image and thumbnails render on the Product Detail page without showing the placeholder when the files exist.",
+        "On Shop, Category, and Home featured product cards, the CMF earbuds product card shows the primary image (not the placeholder) when the image files exist.",
+        "Image URLs remain valid when filenames contain spaces (e.g., \"cmf 1-2.webp\", \"cmf front.jpeg\").",
+        "The generated image URLs do not incorrectly prefix route segments (e.g., no \"/product/assets/...\"), and do not rely on absolute \"/assets/...\" root paths when deployed under a canister path."
+      ]
+    },
+    {
+      "id": "REQ-81",
+      "text": "Update the Home page and category tiles to reference generated static images using the same production-safe base-path approach (instead of hardcoded absolute paths like \"/assets/generated/...\"), so these images also load correctly under Internet Computer base paths.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "no the image is not visible"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Home page hero image loads correctly in both local development and Internet Computer deployments.",
+        "Electronics and Home Decor category tile images load correctly in both local development and Internet Computer deployments.",
+        "No user-facing error text is introduced; any existing fallback/error text remains in plain English."
+      ]
+    },
+    {
+      "id": "REQ-82",
+      "text": "Verify the CMF earbuds static image assets are present in the frontend public assets folder exactly as referenced by the mapping, and ensure they are included in the deployed frontend build output so the browser can fetch them successfully.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "no the image is not visible"
+        ]
+      },
+      "acceptanceCriteria": [
+        "The following files exist under `frontend/public/assets/products/cmf-cc-earbuds/` with exact filenames (including spaces and casing): `cmf front.jpeg`, `cmf 1-2.webp`, `cmf 2-1.webp`, `cmf 7-1.webp`, `cmf 1-1.webp`, `cmf 6-1.webp`.",
+        "The deployed frontend serves these files at the exact URLs produced by the app’s URL generation logic (no 404s for the mapped CMF earbuds images).",
+        "If any file is missing or misnamed, it is added/corrected without changing the filenames referenced in code as a workaround."
+      ]
+    }
+  ],
   "constraints": [
-    "Do not edit files under frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui (compose them instead).",
-    "Keep all user-facing text in plain English.",
-    "Backend must remain a single Motoko actor (no additional backend services)."
+    "Do not edit files under the frontend immutable paths list (e.g., `frontend/src/hooks/useActor.ts`, `frontend/src/main.tsx`, `frontend/src/components/ui`).",
+    "Keep all user-facing text in plain English and do not expose internal/technical error details."
   ],
   "nonGoals": [
-    "Adding real SMS delivery or third-party OTP providers (Twilio, WhatsApp, etc.).",
-    "Adding third-party authentication beyond Internet Identity."
+    "Do not add new products, change product fields, or modify backend product APIs as part of this fix.",
+    "Do not introduce new third-party image hosting or backend image serving; images must remain static frontend assets."
   ],
   "imageRequirements": {
     "required": [],
